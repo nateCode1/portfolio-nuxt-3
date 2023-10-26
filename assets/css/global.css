@@ -1,0 +1,27 @@
+@font-face {
+  font-family: 'Roboto';
+  src: local('Roboto'),
+    url(~assets/Roboto/Roboto-Regular.ttf) format('truetype');
+}
+
+html {
+  font-family: 'Roboto';
+}
+
+p {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+
+.hover-effect {
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.hover-effect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 4px rgba(255,255,255,0.2);
+}
+
+button {
+  text-transform: none !important;
+}
