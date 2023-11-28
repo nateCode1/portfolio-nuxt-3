@@ -3,10 +3,11 @@
 
   <div>
     <v-parallax
-      style="height: 100vh"
+      style="height: 100vh; max-height: 800px;"
+      class="d-flex align-center"
       src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
     >
-      <div class="mb-auto text-center" style="padding-top: 100px">
+      <div class="mb-auto text-center" style="padding-bottom: 100px">
         <h1
           class="mb-n2"
           style="
@@ -271,11 +272,10 @@
               </h2>
               <p data-aos="fade-right">
                 I'm currently in my second year at Queen's University, studying
-                Electrical and Computer Engineering as part of the ECEi program.
+                Computer Engineering as part of the ECEi program.
                 ECEi is an undergraduate program for Electrical and Computer
                 Engineering students with a focus on entrepreneurship and
-                innovation. In my first year I acheived a GPA of 4.0 out of a
-                possible 4.3.
+                innovation. In my first year I acheived a GPA of 4.0 on a scale of 4.3.
               </p>
               <p data-aos="fade-right">
                 During my time at Queen's I've been involved in multiple
@@ -362,7 +362,7 @@
               :key="skill.name"
               :color="skill.color ?? 'gray'"
               variant="outlined"
-              class=""
+              class="hover-effect"
               >{{ skill.name }}</v-chip
             >
           </div>
@@ -389,8 +389,8 @@
           </h1>
           <div
             v-if="modalData.images && modalData.images[1]"
-            class="hover-effect"
-            style="border-radius: 15px; border: 1px solid white"
+            class="hover-effect mt-3"
+            style="border-radius: 15px;"
           >
             <v-carousel style="max-height: 300px">
               <v-carousel-item
@@ -449,6 +449,8 @@ export default {
       frameCount: 0,
       then: null,
       fps: 30,
+
+      customParallaxTargetPos: 0,
 
       mouseX: null,
       mouseY: null,
@@ -533,8 +535,8 @@ export default {
 
       this.allNodes = []
 
-      let spacing = 70
-      let overflow = 35
+      let spacing = 100
+      let overflow = spacing / 2
       let cols =
         Math.floor((this.$refs.aboutMeCanvas.width + 2 * overflow) / spacing) +
         1
@@ -589,7 +591,7 @@ export default {
       if (elapsed > this.fpsInterval) {
         this.then = now - (elapsed % this.fpsInterval)
 
-        this.draw()
+        this.draw(this.frameCount)
         this.frameCount++
       }
     },
@@ -600,10 +602,12 @@ export default {
         document.documentElement.scrollTop || document.body.scrollTop
 
       //custom parallax
-      let cpx = this.$refs.parallaxCustom
       let cpxContainter = this.$refs.parallaxCustomContainer
-      cpx.style.top =
+      this.customParallaxTargetPos =
         -500 - cpxContainter.getBoundingClientRect().top / 5 + 'px'
+
+      let cpx = this.$refs.parallaxCustom;
+      cpx.style.top = this.customParallaxTargetPos;
 
       //nodes
       let forceScale = 0.0045
@@ -647,7 +651,7 @@ export default {
       this.mouseY = newMouseY
     },
 
-    draw() {
+    draw(frameCount) {
       let canvas = this.$refs.aboutMeCanvas
       let ctx = this.$refs.aboutMeCanvas.getContext('2d')
       let rect = canvas.getBoundingClientRect()
@@ -661,7 +665,9 @@ export default {
 
       ctx.lineWidth = 2
 
-      this.allNodes.forEach((node) => {
+      this.allNodes.forEach((node, i) => {
+        // if (i % 5 != frameCount % 5) return false
+
         //PHYSICS
         //Position functions
         node.xt =
@@ -772,6 +778,14 @@ export default {
   font-size: 1.2rem;
 }
 
+.v-chip {
+  transition: background-color 0.2s;
+}
+
+.v-chip:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
 .contact {
   display: flex;
   z-index: 5;
@@ -789,6 +803,7 @@ export default {
 .v-carousel__controls {
   border-radius: 0 0 15px 15px;
   max-height: 35px;
+  background: #e8b02a55 !important;
 }
 
 .subtitle {

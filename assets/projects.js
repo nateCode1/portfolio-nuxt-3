@@ -22,7 +22,7 @@ export default {
     longDescription: `Retiremint is a startup aimed at being an all-in-one retirement planning tool that encompasses all areas of retirement. I worked there in the summer of 2022 and 2023 as a part of a three person team.
     I joined the startup when they were working on the site beta using React JS and Material UI. After the site beta was published we switched to using Vue JS, Nuxt, and Vuetify. My duties included taking mockups and creating site pages based on them that work on all screen sizes. Pages often included dynamic elements including animated and reactive components. Developed a template to allow 12 pages for different areas of retirement to be generated with just JSON. Ended my first summer working for Retiremint by creating an internal tool to allow anyone to upload new content to a database, which would automatically be added to the site.
     In my second year working with Retiremint I continued doing my front-end work, but also began working in more of a back-end and design role. I implemented numerous full-stack features from start to finish including: Google single sign-on, a system to poll site users, and an automated mailing list that doesn't require an account.`,
-    images: ['retiremint/retiremintHome.png'],
+    images: ['retiremint/retiremintHome.png', 'retiremint/aiop.png', 'retiremint/learningCentre.png'],
   },
   walmart: {
     name: 'Walmart',

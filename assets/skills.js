@@ -9,7 +9,7 @@ export default {
   },
   nuxtJS: {
     name: 'Nuxt JS',
-    color: '#3f596e',
+    color: '#5a7891',
   },
   vuetify: {
     name: 'Vuetify',
