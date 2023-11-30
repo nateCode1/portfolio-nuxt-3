@@ -51,7 +51,7 @@
     >
       <v-btn
         v-if="!hideShowMore"
-        class="hover-effect mt-4"
+        class="hover-effect mt-4 text-white"
         @click="openModal(data)"
         :color="color"
         outlined

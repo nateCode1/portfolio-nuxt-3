@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>A*</title>
+	<style>
+		#pCnv {
+			margin: 20px;
+			border: 1px solid gray;	
+		}
+
+		html, body {
+			margin:0px;
+			height:100%;
+		}
+
+		button {
+			padding: 16px 32px;
+			text-align: center;
+			font-size: 22px;
+			transition-duration: 0.1s;
+			cursor: pointer;
+			margin-top: 20px;
+			border-radius: 8px;
+			background-color: rgba(0,0,0,0);
+			color: black;
+			border: 3px solid black;
+		}
+
+		button:hover {
+			background-color: rgb(50,50,50);
+			color: black;
+		}
+
+		* {
+			font-family: Verdana, sans-serif;
+		}
+		</style>
+	<script>
+		var ctx;
+		var cv;
+		var grid;
+		var gridSize = [0,0];
+		var cellSize = [0,0];
+		var mouseDown = false;
+		var start = [0,0];
+		var end = [19,19];
+		var colorsByCost = {
+			"-1": "black",
+			"1": "white",
+			"3": "aqua",
+			"start": "green",
+			"end": "red"
+		}
+		var dirs = [[1,0], [-1,0], [0,1], [0,-1]];
+
+		function generateGrid(wid, hgt) {
+			clear();
+
+			grid=[];
+			gridSize = [wid, hgt];
+			cellSize = [cv.width / wid, cv.height / hgt]
+			for (let y = 0; y < gridSize[1]; y++){
+				grid.push([])
+				for (let x = 0; x < gridSize[0]; x++) {
+					grid[y].push(1);
+				}
+			}
+			console.log(grid);
+			
+			colorGrid()
+		}
+
+		function drawGrid(color = "black", loops = 5, width = 1) {
+			if (loops <= 0) return
+
+			ctx.strokeStyle = color;
+			ctx.lineWidth = width;
+			for (let y = 1; y < gridSize[1]; y++) drawLine([[0, g2C(0,y)[1]], [cv.width, g2C(0,y)[1]]]) //horizontal grid lines
+			for (let x = 1; x < gridSize[0]; x++) drawLine([[g2C(x,0)[0], 0], [g2C(x,0)[0], cv.height]]) //vertical grid lines
+
+			drawGrid(color, loops-1, width) //recursive because canvas can't draw normally for some reason
+		}
+
+		function g2C(x, y, centered = false) {
+			//returns [x,y]
+			return [x*cv.width/gridSize[0] + (centered ? cellSize[0]/2: 0), y*cv.height/gridSize[1] + (centered ? cellSize[1]/2: 0)]
+		}
+
+		function c2G(x, y) {
+			//returns [x index,y index]
+			return [Math.floor(x*gridSize[0]/cv.width), Math.floor(y*gridSize[1]/cv.height)]
+		}
+
+		function fillSquare(pos, color = "#ccc", setData = null) { //takes grid pos
+			ctx.fillStyle = color;
+
+			let start = g2C(pos[0], pos[1])
+			ctx.beginPath();
+			ctx.rect(start[0] + 1, start[1] + 1, cellSize[0] - 2, cellSize[1] - 2);
+			ctx.fill();
+			//drawGrid();
+
+
+			if (setData && (grid[pos[1]]||[])[pos[0]] !== undefined) grid[pos[1]][pos[0]] = parseInt(setData);
+		}
+
+		function typeSquare(pos, text = "1", color = "#000") { //takes grid pos
+			let fontSize = Math.min(cellSize[0], cellSize[1]) - 10;
+			ctx.font = fontSize + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillStyle = color;
+			
+			let drawPos = g2C(pos[0], pos[1])
+			ctx.fillText(text, drawPos[0] + cellSize[0] / 2, drawPos[1] + cellSize[1] / 2 + fontSize / 2 - 5, cellSize[0]);
+			//drawGrid();
+		}
+
+		function colorGrid() {
+			
+			grid.forEach((row, y) => row.forEach((cell, x) => fillSquare([x,y], colorsByCost[grid[y][x]])));
+
+			fillSquare(start, colorsByCost["start"])
+			fillSquare(end, colorsByCost["end"])
+			drawGrid()
+		}
+
+		function drawLine(points, width = 1, color = "black") { //list points
+			ctx.strokeStyle = color;
+			ctx.lineWidth = width;
+			ctx.beginPath();
+			ctx.moveTo(points[0][0], points[0][1]);
+			points.splice(0,1); //remove 1st item
+
+			points.forEach((point) => ctx.lineTo(point[0], point[1]))
+			
+			ctx.stroke();
+		}
+
+		function heatmap(thisStart = start, thisEnd = end, drawPath = true, writeNums = false) {
+			writeNums = document.getElementById("advancedView").checked;
+			let startTime = Date.now()
+
+			let heatmap = [];
+			for (let y = 0; y < gridSize[1]; y++){
+				heatmap.push([])
+				for (let x = 0; x < gridSize[0]; x++) {
+					heatmap[y].push("no");
+				}
+			}
+
+			clear();
+			colorGrid()
+
+			heatmap[thisStart[1]][thisStart[0]] = 0;
+
+			let activeCells = [thisStart];
+			while (activeCells.length > 0) {
+				let activeCell = activeCells[0]
+				let target;
+				
+				dirs.forEach((dir) => {
+					target = [activeCell[0] + dir[0], activeCell[1] + dir[1]];
+					if ((heatmap[target[1]]||[])[target[0]] !== undefined && grid[target[1]][target[0]] >= 0) {
+						let newCost = heatmap[activeCell[1]][activeCell[0]] + grid[target[1]][target[0]]
+						if (heatmap[target[1]][target[0]] == "no" || heatmap[target[1]][target[0]] > newCost) {
+							heatmap[target[1]][target[0]] = newCost;
+							activeCells.push(target);
+						}
+					}
+				})
+				activeCells.splice(0,1); //remove the first index (which has just been processed)	
+			}
+
+			if (writeNums) heatmap.forEach((row, y) => row.forEach((cell, x) => typeSquare([x,y], heatmap[y][x])));
+			drawGrid();
+
+			//drawLine
+			if (heatmap[thisEnd[1]][thisEnd[0]] == "no") {document.getElementById("timeText").textContent = "No valid path :("; return false;}
+			let points = [];
+			let at = thisEnd;
+			let currCost;
+			
+			while(heatmap[at[1]][at[0]] != 0) {
+				points.push(g2C(at[0], at[1], true));
+				let nextMove = undefined;
+				dirs.forEach((dir, i) =>{
+					if ((heatmap[at[1] + dir[1]]||[])[at[0] + dir[0]] !== undefined) {
+						if (heatmap[at[1] + dir[1]][at[0] + dir[0]] < currCost || currCost === undefined && heatmap[at[1] + dir[1]][at[0] + dir[0]] != "no") {
+							currCost = heatmap[at[1] + dir[1]][at[0] + dir[0]];
+							nextMove = [at[0] + dir[0], at[1] + dir[1]];
+						}
+					}
+				})
+
+				fillSquare(at, "rgba(0,0,0,0.2)");
+				at = nextMove;
+			}
+
+			fillSquare(at, "rgba(0,0,0,0.2)");
+			points.push(g2C(at[0], at[1], true));
+			drawLine(points, 5, "blue");
+
+			console.log("Time elapsed", Date.now() - startTime);
+			document.getElementById("timeText").textContent = "Time to find & draw path: " + (Date.now() - startTime) / 1000 + "s";
+		}
+
+		function clear() {
+			ctx.fillStyle = "white";
+			ctx.beginPath();
+			ctx.rect(0, 0, cv.width, cv.height);
+			ctx.fill();
+		}
+		
+		function onReady() {
+			ctx = document.getElementById("pCnv").getContext("2d");
+			cv = document.getElementById("pCnv");
+
+			clear();
+
+			generateGrid(20, 20);
+
+			//event listners :)
+			pCnv.addEventListener("mousedown", (e) => { 
+				mouseDown = true;
+				brush()
+			});
+			pCnv.addEventListener("mousemove", (e) => { 
+				
+				if (mouseDown) {
+					brush()
+				}
+			});
+			document.addEventListener("mouseup", (e) => { 
+				mouseDown = false;
+			});
+			document.addEventListener("keydown", (key) => { 
+			
+				//alert(key.keyCode);
+			});
+
+		}
+		
+		function setNavigation() {
+			let brush = document.querySelector('input[name="directions"]:checked') ? document.querySelector('input[name="directions"]:checked').value : "standard";
+			console.log("Hello")
+			switch(brush) {
+				case "standard":
+					dirs = [[1,0], [-1,0], [0,1], [0,-1]];
+					break;
+				case "knight":
+					dirs = [[2,1], [1,2], [-2,1], [-1,2], [-2,-1], [-1,-2], [2,-1], [1,-2]];
+					break;
+				case "king":
+					dirs = [[1,0], [1,1], [0,1], [-1,1], [-1,0], [-1,-1], [0,-1], [1,-1]];
+			}
+		}
+
+		function brush() {
+			const rect = pCnv.getBoundingClientRect();
+			const x = event.clientX - rect.left + 0.5;
+			const y = event.clientY - rect.top + 0.5;
+
+			let brush = document.querySelector('input[name="placing"]:checked') ? document.querySelector('input[name="placing"]:checked').value : -1;
+			if (!isNaN(brush) && JSON.stringify(c2G(x,y)) != JSON.stringify(end) && JSON.stringify(c2G(x,y)) != JSON.stringify(start)) fillSquare(c2G(x,y), colorsByCost[brush], brush);
+			else if (brush == "end") {end = c2G(x,y); colorGrid();}
+			else if (brush == "start") {start = c2G(x,y); colorGrid();}
+		}
+
+		function resizeGrid() {
+			console.log("hehehb")
+			let size = document.getElementById("gridSize").value
+			generateGrid(size, size)
+		}
+		
+		document.addEventListener("DOMContentLoaded", () => { onReady(); });
+		
+		
+		
+	</script>
+  </head>
+  <body>
+	<div style="display: flex;">
+		<canvas id="pCnv" width="800" height="800"></canvas>
+
+		<div>
+			<h3>Place Tiles:</h3>
+			<input checked="checked" type="radio" id="wall" name="placing" value="-1">
+			<label for="wall">Wall (impassable)</label><br>
+			<input type="radio" id="empty" name="placing" value="1">
+			<label for="empty">Empty</label><br>
+			<input type="radio" id="water" name="placing" value="3">
+			<label for="water">Slow</label><br>
+			<input type="radio" id="start" name="placing" value="start">
+			<label for="start">Start</label><br>
+			<input type="radio" id="end" name="placing" value="end">
+			<label for="end">End</label><br>
+
+			<div onClick="setNavigation()">
+				<h3>Navigation Options:</h3>
+				<input checked="checked" type="radio" id="standard" name="directions" value="standard">
+				<label for="standard">Standard (up, down, left, right)</label><br>
+				<input type="radio" id="knight" name="directions" value="knight">
+				<label for="knight"><a target="_blank" href="https://mrcoles.com/media/img/chess/knight-1-move.png">Chess Knight</a></label><br>
+				<input type="radio" id="king" name="directions" value="king">
+				<label for="king"><a target="_blank" href="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/pdrpnht/phpmVRKYr.png">Chess King</a></label><br>
+			</div>
+
+			<h3>Grid Size</h3>
+			<input onChange="resizeGrid()" id="gridSize" type="number" value="20" max="250"><br>
+			<p>Can be hard to see beyond 50</p>
+
+			<h3>Show Advanced</h3>
+			<input type="checkbox" id="advancedView"><br>
+			<p>Shows the calculated "cost" to reach each cell.</p>
+
+			<button onClick="heatmap()">Generate Path</button>
+			<h5 id="timeText"></h5>
+		</div>
+	</div>
+
+  </body>
+</html>

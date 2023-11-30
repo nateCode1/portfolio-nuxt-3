@@ -11,16 +11,6 @@ const custom = {
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
-    display: {
-      mobileBreakpoint: 'sm',
-      thresholds: {
-        xs: 0,
-        sm: 480,
-        md: 650,
-        lg: 800,
-        xl: 1400,
-      },
-    },
     theme: {
       defaultTheme: "dark",
       themes: {

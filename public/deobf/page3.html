@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+	
+	<head>
+		<meta charset="utf-8"/>
+		<link rel="icon" href="images/player.png">
+		<title>Game Page</title>
+		<style>
+			
+			*{
+				margin: 0px;
+				padding: 0px;
+				box-sizing: border-box;
+			}
+			
+			html, body {
+				width: 100%;
+				height: 100%;
+				
+				overflow: hidden;
+			}
+			
+			#canv1 {
+				display: block;
+				background-color: white;
+			}
+			
+			.hide {
+				display: none;
+			}
+		</style>
+		
+		<script type="text/javascript" src="levels.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script>
+		//Menu doesnt have a prompt to press esc to go back so that it can scale much smaller than normal
+		//The controls in this game are going to feel a bit unresponsive, however this is just because i neglected to include something called coyote time where your inputs can occur slightly outside the required time for those inputs
+		var c1;
+		var ctx;
+		// NEW LEVEL REQUIRES: addition to levelTimes, text for layout, levelstars addition, new images for collectables
+		// put in some tts sound effects
+		var levelStarTimes = [[350,600], [450,600], [400, 550], [550, 690], [675, 800], [850,1200]];
+		var levelStars = [0,0,0,0,0,0];
+		var allButtons = [];
+		var colliders = [];
+		var playerList = [];
+		var collectables = [];
+		var deadly = [];
+		var gameState = "menu";
+		var rightDown = 0;
+		var leftDown = 0;
+		var levelId = 1;
+		var xScale;
+		var yScale;
+		var deathTimer = 0;
+		var doDeath = false;
+		var levelTimer = 0;
+		var finalTime = 999999;
+		var earnedStars = 1;
+		var failText = "You Failed";
+		const FPS = 60;
+		let prevFrame = 0; 
+		
+		
+		//Objects ############################################################################################################################################################################################################################
+		
+		function button(x, y, width, height, color, hoverColor, funcName, activeGamestate, text, param) { 
+			this.funcName = funcName; 
+			this.activeGamestate = activeGamestate; 
+			this.text = text;
+			this.y = y;
+			this.x = x;
+			this.color = color;
+			this.hoverColor = hoverColor;
+			this.width = width;
+			this.height = height;
+			this.hover = false;
+			this.param = param;
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+			this.draw = function() {
+				ctx.fillStyle = this.color;
+				if (this.hover){
+					ctx.fillStyle = this.hoverColor;
+				}
+				ctx.strokeStyle = "#000000";
+				ctx.lineWidth = 4;
+				ctx.beginPath();
+				ctx.rect(this.x, this.y, this.width, this.height);
+				ctx.fill();
+				ctx.stroke();
+				//text
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(this.width * 1.1, this.height * 0.7) + "px Arial"; //sets the font size based on the size of the box
+				ctx.textAlign = "center";
+				ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height * 0.8);
+			}
+		}
+		
+		function wall(x,y,width,height){
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			
+			this.draw = function() {
+				//ctx.drawImage(document.getElementById("back"), this.x, this.y, this.width, this.height);
+				ctx.fillStyle = "rgba(0,0,100,0.5)";
+				ctx.fillRect(this.x,this.y,this.width ,this.height);
+			}
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		function spike(x,y,width,height){
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			
+			this.draw = function() {
+				spr = document.querySelectorAll(".spike");
+				if (randInt(0,20) != 0){
+					ctx.drawImage(spr[0], this.x, this.y, this.width, this.height);
+				}
+				else{
+					ctx.drawImage(spr[1], this.x, this.y, this.width, this.height);
+				}
+			}
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		function collectable(x,y,width,height,indNum){
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.indNum = indNum;
+			
+			this.draw = function() {
+				ctx.drawImage(document.querySelectorAll(".lv" + levelId)[this.indNum], this.x, this.y, this.width, this.height);
+			}
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		function player(x,y,xSp,ySp,width,height,spd,friction,grav,jumpHeight,maxSp,color){
+			this.x = x;
+			this.y = y;
+			this.xSp = xSp;
+			this.ySp = ySp;
+			this.height = height;
+			this.width = width;
+			this.spd = spd * xScale;
+			this.friction = friction * xScale;
+			this.jumpHeight = jumpHeight * yScale;
+			this.grav = grav * yScale;
+			this.maxSp = maxSp * xScale;
+			this.color = color;
+			
+			this.draw = function() {
+				ctx.drawImage(document.getElementById("player"), this.x, this.y, this.width, this.height);
+			}
+			
+			this.frameHandle = function() {
+				this.xSp = (Math.min(Math.abs(this.xSp), this.maxSp)) * Math.sign(this.xSp);
+				
+				this.xSp -= Math.min(this.friction, Math.abs(this.xSp)) * Math.sign(this.xSp);
+				this.ySp += this.grav;
+				
+				//Y move
+				if (this.isFree(this.x, this.y + this.ySp, colliders)){
+					this.y += this.ySp;
+				}
+				else {
+					while (this.isFree(this.x, this.y + Math.sign(this.ySp), colliders)) {
+						this.y += Math.sign(this.ySp);
+					}
+					this.ySp = 0;
+				}
+				
+				//X move
+				if (this.isFree(this.x + this.xSp, this.y, colliders)){
+					this.x += this.xSp ;
+				}
+				else {
+					while (this.isFree(this.x + Math.sign(this.xSp), this.y, colliders)) {
+						this.x += Math.sign(this.xSp);
+					}
+					this.xSp = 0;
+				}
+				
+				//collectables
+				if (!this.isFree(this.x, this.y, collectables)){
+					if (!this.isFree(this.x, this.y, [collectables[0]])){
+						collectables.splice(0, 1);
+					}
+					else {
+						die(500);
+						failText = "Wrong Order";
+						failText = "Wrong Order";
+					}
+				}
+				
+				//deadlies
+				if (!this.isFree(this.x, this.y, deadly)){
+					die(499);
+					failText = "You Died";
+				}
+			}
+			
+			this.jump = function() {
+				if (!this.isFree(this.x, this.y + 1, colliders)){
+					this.ySp = -this.jumpHeight;
+				}
+			}
+		
+			
+			this.isFree = function(cX,cY,itemList) {
+				for (var i = 0; i < itemList.length; i++){
+					//top bottom
+					for (var x = 0; x < this.width; x++) {
+						if (itemList[i].checkCollide(cX + x,cY) || itemList[i].checkCollide(cX + x,cY + this.height)){
+							return false;
+						}
+					}
+					//right/left
+					for (var y = 0; y < this.height; y++) {
+						if (itemList[i].checkCollide(cX,cY + y) || itemList[i].checkCollide(cX + this.width,cY + y)){
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+		}
+		
+		function sound(src) { //taken from https://www.w3schools.com/graphics/game_sound.asp
+			this.sound = document.createElement("audio");
+			this.sound.src = src;
+			this.sound.setAttribute("preload", "auto");
+			this.sound.setAttribute("controls", "none");
+			this.sound.style.display = "none";
+			document.body.appendChild(this.sound);
+			this.play = function(){
+				this.sound.currentTime = 0;
+				this.sound.play();
+			}
+			this.stop = function(){
+				this.sound.pause();
+			}
+		}
+		
+		//Event listeners ############################################################################################################################################################################################################################
+		
+		document.addEventListener("DOMContentLoaded", function() { //on content load basically just gets any variables dependent on the canvas, generates any required objects, then starts frame looping
+			c1 = document.getElementById("canv1");	
+			ctx = document.getElementById("canv1").getContext("2d");
+			
+			//set the size on load because it isnt set when the screen changes size
+			c1.width = window.innerWidth;
+			c1.height = window.innerHeight;
+			
+			//set an event listener
+			c1.addEventListener('mousedown', function(e) {
+				getCursorPosition(c1, e)
+			})
+			
+			//localstorage things
+			//Summary of MacBeth - macbeth meats these three witches and they tell him that hes going to be a king but theres already a king so he talks to his wife about the king then she says kill him and mcbeath be like no but lady mcbeath say yes then he kills the king and beccomes king then the witches warn him of someone and he kills them then the walking trees rollup be like hey and mcbeath ded
+			if (localStorage.getItem('levelStars') != null){
+				levelStars = localStorage.getItem('levelStars').split(",");
+			}
+			else {
+				localStorage.setItem('levelStars', levelStars);
+			}
+			
+			//for canvas scaling
+			xScale = (c1.width / 1800);
+			yScale = (c1.height / 970);
+			
+			//buttons
+			allButtons.push(new button(c1.width / 2 - c1.width / 6, c1.height / 2, c1.width / 3, c1.width / 12, "#555555", "#333333", "resetLevel", "death", "Restart"));
+			
+			//Menu row 1
+			allButtons.push(new button(c1.width / 5	 - c1.width / 10, c1.height / 3, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv1", 0));
+			allButtons.push(new button(c1.width / 2	 - c1.width / 10, c1.height / 3, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv2", 1));
+			allButtons.push(new button(c1.width / 1.25 - c1.width / 10, c1.height / 3, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv3", 2));
+			
+			//Menu row 2
+			allButtons.push(new button(c1.width / 5	 - c1.width / 10, c1.height / 1.5, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv4", 3));
+			allButtons.push(new button(c1.width / 2	 - c1.width / 10, c1.height / 1.5, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv5", 4));
+			allButtons.push(new button(c1.width / 1.25 - c1.width / 10, c1.height / 1.5, c1.width / 5, c1.width / 12, "rgba(0,0,110,0.5)", "rgba(0,0,110,0.8)", "startLevel", "menu", "Lv6", 5));
+			
+			//resetLevel();
+			
+			frame();
+			
+			//startLevel(1);
+		});
+		
+		document.addEventListener("keydown", function(key) {
+			//alert(key.keyCode);
+			if (!doDeath){
+				if (key.keyCode == 68) { //D
+					rightDown = 1;
+				}
+				
+				else if (key.keyCode == 65) { //S
+					leftDown = -1;
+				}
+				
+				else if (key.keyCode == 87 || key.keyCode == 32){ //W
+					for (var i = 0; i < playerList.length; i++){
+						playerList[i].jump();
+					}
+				}
+			}
+			if (key.keyCode == 82){
+				die(0);
+			}
+		});
+		
+		document.addEventListener("keyup", function(key) {
+			//alert(key.keyCode);
+			if (key.keyCode == 68) { //D
+				rightDown = 0;
+			}
+			else if (key.keyCode == 65) { //S
+				leftDown = 0;
+			}	
+			else if (key.keyCode == 27) { //S
+				if (gameState == "menu"){
+					window.location.replace("index.html");
+				}
+				gameState = "menu";
+				levelStars = localStorage.getItem('levelStars').split(",");
+			}
+		});
+		
+		$(document).on("mousemove", function(e){					
+			var x = e.pageX
+			var y = e.pageY
+			
+			for (var i = 0; i < allButtons.length; i++){
+				allButtons[i].hover = false;
+				if (allButtons[i].checkCollide(x,y)){
+					allButtons[i].hover = true;
+				}
+			}
+		});
+		
+		function getCursorPosition(canvas, event) {
+			const rect = canvas.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			
+			for (var i = 0; i < allButtons.length; i++){
+				if (allButtons[i].checkCollide(x,y) && allButtons[i].activeGamestate == gameState){
+					eval(allButtons[i].funcName + "(" + allButtons[i].param + ")");
+				}
+			}
+		}
+		
+		window.addEventListener("resize", function(){
+			//c1.width = window.innerWidth;
+			//c1.height = window.innerHeight;
+		});
+		
+		//Misc functions/drawing ############################################################################################################################################################################################################################
+		function randInt(min, max) {
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
+		
+		function die(delay) {
+			if (!doDeath){
+				deathTimer = delay;
+				doDeath = true;
+				gameState = "death";
+			}
+		}
+		
+		function drawBack() {
+			for (var x = 0; x < c1.width; x += 350){
+				for (var y = 0; y < c1.height; y += 350){
+					ctx.drawImage(document.getElementById("back"), x, y,);
+				}
+			}
+		}
+		
+		function startLevel(levelNum) {
+			gameState = "play";
+			levelId = levelNum;
+			resetLevel();
+		}
+		
+		function drawMenu() {
+			ctx.fillStyle = "rgba(100,101,100,0.8)";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			drawFullScreenText(c1.height / 5, "DE-OBFUSCATE", (c1.width * 0.12), "rgb(0,0,120)", "Courier New");
+			
+			for (var i = 0; i < allButtons.length; i++) {
+				if (!isNaN(allButtons[i].param)){
+					ctx.fillStyle = "#d4af37";
+					ctx.font = (c1.width * 0.09) + "px Arial";
+					ctx.textAlign = "center";
+					var starString = "";
+					for (var c = 0; c < levelStars[allButtons[i].param]; c++){
+						starString += "\u22C6";
+					}
+					ctx.fillText(starString, allButtons[i].x + allButtons[i].width / 2, allButtons[i].y);
+				}
+			}
+		}
+		
+		function drawWinScreen(){
+			
+			ctx.fillStyle = "rgba(100,100,100,0.5)";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			drawFullScreenText(c1.height / 6, "You restored all the data!", (c1.width * 0.07));
+			
+			playerList = [];
+			
+			var starString = "";
+			for (var i = 0; i < earnedStars; i++){
+				starString += "\u22C6";
+			}
+			drawFullScreenText(c1.height / 1.2, starString, c1.width * 0.4, "#d4af37");
+		}
+		
+		function drawFullScreenText(y, text, fontSize, color, font){
+			//optional parameter handling
+			fontSize = fontSize || (c1.width * 0.05);
+			color = color || "#000000";
+			font = font || "Arial"
+			
+			ctx.fillStyle = color;
+			ctx.font = fontSize + "px " + font;
+			ctx.textAlign = "center";
+			ctx.fillText(text, c1.width / 2, y);
+		}
+
+		function resetLevel() {
+			colliders = [];
+			playerList = [];
+			deadly = [];
+			collectables = [];
+			gameState = "play";
+			rightDown = 0;
+			leftDown = 0;
+			deathTimer = 0;
+			levelTimer = 0;
+			doDeath = false;
+			finalTime = 999999;
+			earnedStars = 1;
+			failText = "You Failed";
+						
+			generateLevel();
+		}
+		
+		function generateLevel() { //gets data from file and turns that into a level
+			levelData = levelRawText[levelId];
+			
+			levelData = levelData.split(",");
+			
+			for (var y = 0; y < levelData.length; y++){
+				for (var x = 0; x < levelData[y].length; x++){
+					// DICT OF ALL CHARS -- [#:standard block, O: empty, Numbers: collectables, ^: spike, @: player]
+					if (levelData[y][x] == "@"){
+						playerList.push(new player(x * c1.width / levelData[y].length, y * c1.height / (levelData.length - 1),0,0,c1.width / levelRawText[levelId].split(",")[0].length, c1.height / levelRawText[levelId].split(",").length * 1.3,5,4,1,22,15,"#33FF88"));
+					}
+					
+					if (levelData[y][x] == "#"){
+						colliders.push(new wall(x * c1.width / levelData[y].length, y * c1.height / (levelData.length - 1), c1.width / levelData[y].length, c1.height / (levelData.length - 1)));
+					}
+					
+					if (levelData[y][x] == "^"){
+						deadly.push(new spike(x * c1.width / levelData[y].length, y * c1.height / (levelData.length - 1), c1.width / levelData[y].length, c1.height / (levelData.length - 1)));
+					}
+					
+					if (!isNaN(levelData[y][x])){
+						collectables[levelData[y][x]] = new collectable(x * c1.width / levelData[y].length + (c1.width / levelData[y].length) / 2, y * c1.height / (levelData.length - 1), (c1.width / levelData[y].length), c1.height / (levelData.length - 1), levelData[y][x]);
+					}
+				}
+			}
+		}
+		
+		function spawnFriends() { //unused, but a lot of fun
+			for (var i = 0; i < 10; i++){
+				playerList.push(new player(randInt(50,c1.width - 50),randInt(0,30),0,0,randInt(20,100),randInt(20,100),randInt(5,7),randInt(1,4),randInt(1,3),randInt(10,50),"rgb(" + randInt(0,255) + "," + randInt(0,255) + "," + randInt(0,255) + ")"));
+			}
+		}
+		
+		function frame() {
+			requestAnimationFrame(frame);
+			
+			//Clamping Framerate
+			let now = Math.round(FPS * Date.now() / 1000);
+			if (now == prevFrame) {
+				return;
+			}
+			prevFrame = now;
+			
+			drawBack()
+			ctx.fillStyle = "rgba(100,255,100,0.2)";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			for (var i = 0; i < colliders.length; i++){
+				colliders[i].draw();
+			}
+			
+			for (var i = 0; i < deadly.length; i++){
+				deadly[i].draw();
+			}
+			
+			for (var i = 0; i < playerList.length; i++){
+				playerList[i].frameHandle();
+				playerList[i].draw();
+				
+				playerList[i].xSp += playerList[i].spd * (rightDown + leftDown);
+				
+				if (playerList[i].y > c1.height * 3){ //kill u if u fall off
+					failText = "You Fell Off";
+					die(300);
+				}
+			}
+			
+			for (var i = 0; i < collectables.length; i++){
+				collectables[i].draw();
+			}
+			
+			levelTimer++;
+			
+			deathTimer--;
+			if (deathTimer <= 0 && doDeath){ //auto reset if you don't click the button
+				resetLevel();
+			}
+			
+			//UI Stuffs
+			
+			if (gameState == "death"){
+				//deathtext
+				ctx.fillStyle = "rgba(100,100,100,0.5)";
+				ctx.fillRect(0, 0, c1.width, c1.height);
+				drawFullScreenText(c1.height / 8, failText)
+			}
+			
+			//win state
+			if (collectables.length <= 0){
+				if (gameState == "play"){
+					finalTime = levelTimer;
+					gameState = "win";
+					if (levelStarTimes[levelId][1] > finalTime){ //2nd star
+						earnedStars++;
+					}
+					if (levelStarTimes[levelId][0] > finalTime){ //3rd star
+						earnedStars++;
+					}
+					temp = localStorage.getItem('levelStars').split(",");
+					temp[levelId] = Math.max(earnedStars, temp[levelId]);
+					
+					localStorage.setItem('levelStars', temp);
+				}
+				if (levelTimer - finalTime > 100) {
+					gameState = "menu";
+					levelStars = localStorage.getItem('levelStars').split(",");
+				}
+			}
+			
+			if (gameState == "win"){
+				drawWinScreen();
+			}
+			
+			if (gameState == "menu"){
+				drawMenu();
+				playerList = [];
+			}
+			
+			//draw any needed buttons
+			for (var i = 0; i < allButtons.length; i++){
+				if (allButtons[i].activeGamestate == gameState){
+					allButtons[i].draw();
+				}
+			}
+		}
+		
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="canv1" width="1900" height="930" style="border:1px solid #000;"></canvas>
+		
+		<img id="player" class="hide" src="images/player.png"/>
+		<img id="back" class="hide" src="images/circutBoard.png"/>
+		<img class="spike hide" src="images/spike1.png"/>
+		<img class="spike hide" src="images/spike2.png"/>
+		
+		<img class="lv0 hide" src="images/collectables/level1/box1.png"/>
+		<img class="lv0 hide" src="images/collectables/level1/box2.png"/>
+		<img class="lv0 hide" src="images/collectables/level1/box3.png"/>
+		<img class="lv0 hide" src="images/collectables/level1/box4.png"/>
+		<img class="lv0 hide" src="images/collectables/level1/box5.png"/>
+		
+		<img class="lv1 hide" src="images/collectables/level2/box1.png"/>
+		<img class="lv1 hide" src="images/collectables/level2/box2.png"/>
+		<img class="lv1 hide" src="images/collectables/level2/box3.png"/>
+		<img class="lv1 hide" src="images/collectables/level2/box4.png"/>
+		
+		<img class="lv2 hide" src="images/collectables/level3/box1.png"/>
+		<img class="lv2 hide" src="images/collectables/level3/box2.png"/>
+		<img class="lv2 hide" src="images/collectables/level3/box3.png"/>
+		<img class="lv2 hide" src="images/collectables/level3/box4.png"/>
+		
+		<img class="lv3 hide" src="images/collectables/level4/box1.png"/>
+		<img class="lv3 hide" src="images/collectables/level4/box2.png"/>
+		<img class="lv3 hide" src="images/collectables/level4/box3.png"/>
+		<img class="lv3 hide" src="images/collectables/level4/box4.png"/>
+		
+		<img class="lv4 hide" src="images/collectables/level5/box1.png"/>
+		<img class="lv4 hide" src="images/collectables/level5/box2.png"/>
+		<img class="lv4 hide" src="images/collectables/level5/box3.png"/>
+		<img class="lv4 hide" src="images/collectables/level5/box4.png"/>
+		<img class="lv4 hide" src="images/collectables/level5/box5.png"/>
+		<img class="lv4 hide" src="images/collectables/level5/box6.png"/>
+		
+		<img class="lv5 hide" src="images/collectables/level6/box1.png"/>
+		<img class="lv5 hide" src="images/collectables/level6/box2.png"/>
+		<img class="lv5 hide" src="images/collectables/level6/box3.png"/>
+		<img class="lv5 hide" src="images/collectables/level6/box4.png"/>
+	</body>
+	
+</html>

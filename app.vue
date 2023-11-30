@@ -73,7 +73,7 @@
               "
             >
               <img
-                src="nathan.jpg"
+                src="/nathan.jpg"
                 class="rounded-lg"
                 style="width: 100%; max-width: 400px"
                 ref="headshot"
@@ -123,9 +123,7 @@
           <v-col cols="12" md="4" class="contact">
             <v-icon large>mdi-linkedin</v-icon>
             <p>
-              <a
-                target="blank"
-                href="https://www.linkedin.com/in/nathan-harrison-aba110251/"
+              <a target="blank" href="www.linkedin.com/in/nathan-harrison-dev"
                 >Linkedin Page</a
               >
             </p>
@@ -148,34 +146,32 @@
           </div>
           <v-tabs
             v-model="tab"
+            v-if="$vuetify.display.width >= 700"
             fixed-tabs
-            style="background-color: rgba(0, 0, 0, 0)"
             align-tabs="center"
             class="rounded-lg"
-            :style="{ height: $vuetify.display.smAndDown ? '' : '70px' }"
-            :direction="$vuetify.display.smAndDown ? 'vertical' : 'horizontal'"
             :color="theme.tYellow"
+            direction="horizontal"
+            style="height: 75px"
           >
             <v-tab
+              v-for="tab in tabs"
+              :key="tab.title"
               class="tab"
-              :style="{'width': $vuetify.display.smAndDown ? '100%' : '', 'margin': $vuetify.display.smAndDown ? 'auto' : '' }"
-              value="work"
-              >Work Experience</v-tab
-            >
-            <v-tab
-              class="tab"
-              :style="{'width': $vuetify.display.smAndDown ? '100%' : '', 'margin': $vuetify.display.smAndDown ? 'auto' : '' }"
-              value="projects"
-              >Projects</v-tab
-            >
-            <!-- <v-tab class="tab" value="timeline">Personal Timeline</v-tab> -->
-            <v-tab
-              class="tab"
-              :style="{'width': $vuetify.display.smAndDown ? '100%' : '', 'margin': $vuetify.display.smAndDown ? 'auto' : '' }"
-              value="education"
-              >Education</v-tab
+              :value="tab.value"
+              >{{ tab.title }}</v-tab
             >
           </v-tabs>
+          <div v-else class="d-flex justify-center flex-wrap">
+            <v-btn
+              v-for="btn in tabs"
+              :key="btn.title"
+              class="tab"
+              :style="{'backgroundColor': tab == btn.value ? 'rgba(255, 195, 0, 0.4)' : 'rgba(255, 195, 0, 0.1)'}"
+              @click="tab = btn.value"
+              >{{ btn.title }}
+            </v-btn>
+          </div>
         </div>
       </div>
 
@@ -192,7 +188,7 @@
       >
         <img
           ref="parallaxCustom"
-          src="test1BgPf.png"
+          src="/test1BgPf.png"
           style="
             filter: brightness(120%) contrast(110%);
             width: 100%;
@@ -311,38 +307,76 @@
                 style="background-color: #1d1d1f; border-radius: 20px"
                 class="pa-5 pa-md-7 pb-md-5"
               >
-                <h1 class="text-center text-md-left" data-aos="fade-right">Queen's University</h1>
-                <h2 style="font-weight: 100" data-aos="fade-right" class="mb-3 text-center text-md-left">
-                  2022 - Present
+                <h1 class="text-center text-md-left" data-aos="fade-right">
+                  Queen's University
+                </h1>
+                <h2
+                  style="font-weight: 100"
+                  data-aos="fade-right"
+                  class="mb-3 text-center text-md-left"
+                >
+                  2022 - 2026
                 </h2>
-                <p data-aos="fade-right" class="mb-2">
-                  I'm currently in my second year at Queen's University,
-                  studying Computer Engineering as part of the ECEi program.
-                  ECEi is an undergraduate program for Electrical and Computer
-                  Engineering students with a focus on entrepreneurship and
-                  innovation. In my first year I acheived a GPA of 4.0 on a
-                  scale of 4.3.
-                </p>
-                <p data-aos="fade-right">
-                  During my time at Queen's I've been involved in multiple
-                  extracirriculars. Most notably I am a member of the Queen's
-                  Varsity Fencing Team. Additionally, I've been involved with
-                  web development club QWeb, and have recently joined the
-                  Queen's Cloud Computing Club.
-                </p>
- 
+                <div class="d-flex align-center">
+                  <div>
+                    <p data-aos="fade-right" class="mb-2">
+                      I'm currently in my second year at Queen's University,
+                      studying Computer Engineering as part of the ECEi program.
+                      ECEi is an undergraduate program for Electrical and
+                      Computer Engineering students with a focus on
+                      entrepreneurship and innovation. In my first year I
+                      acheived a GPA of 4.0 of a possible 4.3.
+                    </p>
+                    <div
+                      v-if="$vuetify.display.smAndDown"
+                      class="d-flex justify-center my-5"
+                    >
+                      <v-img
+                        data-aos="fade"
+                        style="
+                          width: 100%;
+                          max-width: 400px;
+                          object-fit: cover;
+                          border-radius: 10px;
+                        "
+                        :style="{ border: '2px solid ' + theme.tBlue }"
+                        src="/education/academicAllStar.jpg"
+                      />
+                    </div>
+                    <p data-aos="fade-right">
+                      During my time at Queen's I've been involved in multiple
+                      extracirriculars. Most notably I am a member of the
+                      Queen's Varsity Fencing Team. I have also recently joined
+                      the Queen's Cloud Computing Club.
+                    </p>
+                  </div>
+                  <div v-if="$vuetify.display.mdAndUp">
+                    <v-img
+                      data-aos="fade"
+                      style="
+                        max-width: 100%;
+                        width: 400px;
+                        object-fit: cover;
+                        border-radius: 10px;
+                      "
+                      :style="{ border: '2px solid ' + theme.tBlue }"
+                      src="/education/academicAllstar.jpg"
+                    />
+                  </div>
+                </div>
+
                 <h1 data-aos="fade-left" class="text-center text-md-left mt-8">
                   Sacred Heart High School (Newmarket)
                 </h1>
+                <h2
+                  data-aos="fade-left"
+                  style="font-weight: 100"
+                  class="mb-3 text-center text-md-left"
+                >
+                  2018 - 2022
+                </h2>
                 <v-row class="align-center mt-3">
-                  <v-col cols="12" md="7">
-                    <h2
-                      data-aos="fade-left"
-                      style="font-weight: 100"
-                      class="mb-3 text-center text-md-left"
-                    >
-                      2018 - 2022
-                    </h2>
+                  <v-col :cols="$vuetify.display.lgAndUp ? 7 : 12">
                     <p data-aos="fade-left">
                       In high school I was part of the AP program. I graduated
                       with high honours, and was awarded a scholarship by the
@@ -352,23 +386,26 @@
                       4/5 on AP computer science.
                     </p>
                   </v-col>
-                  <v-col cols="12" md="5">
+                  <v-col
+                    :cols="$vuetify.display.lgAndUp ? 5 : 12"
+                    class="d-flex justify-center"
+                  >
                     <v-img
                       data-aos="fade"
-                      style="max-width: 100%; border-radius: 10px"
+                      style="max-width: 400px; width: 100%; border-radius: 10px"
                       :style="{ border: '2px solid ' + theme.tRed }"
-                      src="education/sacred.jpg"
+                      src="/education/sacred.jpg"
                     />
                   </v-col>
-                  <v-col v-if="$vuetify.display.mdAndUp" cols="5">
+                  <v-col v-if="$vuetify.display.lgAndUp" cols="5">
                     <v-img
                       data-aos="fade"
                       style="max-width: 100%; border-radius: 10px"
                       :style="{ border: '2px solid ' + theme.tYellow }"
-                      src="education/sacred.jpg"
+                      src="/education/sacred.jpg"
                     />
                   </v-col>
-                  <v-col cols="12" md="7">
+                  <v-col :cols="$vuetify.display.lgAndUp ? 7 : 12">
                     <p data-aos="fade-left">
                       Throughout high school I was very involved with the school
                       community. I was a member of the school's AV club, and
@@ -400,20 +437,23 @@
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-card-title style="gap: 15px;" class="d-flex flex-column flex-md-row align-center justify-center justify-md-space-between">
+          <v-card-title
+            style="gap: 15px"
+            class="d-flex flex-column flex-md-row align-center justify-center justify-md-space-between"
+          >
             <h1 style="font-size: 3rem" class="mb-2">{{ modalData.name }}</h1>
             <a v-if="modalData.link" :href="modalData.link" target="blank"
               ><v-btn
                 x-large
                 outlined
                 :color="theme.tGreen"
-                style="font-size: 1.1rem; height: 40px;"
+                style="font-size: 1.1rem; height: 40px"
                 class="click-me hover-effect text-white font-weight px-5 rounded-xl mr-md-8"
                 >Visit Project</v-btn
               ></a
             >
           </v-card-title>
-          <v-card-text class="mt-2 show-scroll" style="overflow-y: scroll;">
+          <v-card-text class="mt-2 show-scroll" style="overflow-y: scroll">
             <div class="d-flex flex-wrap mb-3" style="gap: 10px">
               <v-chip
                 v-for="skill in modalData.skills"
@@ -429,7 +469,7 @@
                 v-for="paragraph in modalData.longDescription.split('\n')"
                 :key="paragraph"
                 class="my-4"
-                style="line-height: 1.6; font-weight: thin; font-size: 1.1em;"
+                style="line-height: 1.6; font-weight: thin; font-size: 1.1em"
               >
                 {{ paragraph }}
               </p>
@@ -447,7 +487,7 @@
             </h1>
             <div
               v-if="modalData.images && modalData.images[1]"
-              class="hover-effect mt-3"
+              class="mt-3"
               style="border-radius: 15px"
             >
               <v-carousel style="max-height: 300px">
@@ -497,6 +537,12 @@ export default {
       skills: skills,
 
       tab: "work",
+      tabs: [
+        { title: "Work Experience", value: "work" },
+        { title: "Projects", value: "projects" },
+        // {title: 'Personal Timeline', value: 'timeline'},
+        { title: "Education", value: "education" },
+      ],
 
       theme: {},
       colors: ["#ffffff"],
@@ -647,7 +693,7 @@ export default {
       let now = Date.now();
       let elapsed = now - this.then;
 
-      if (elapsed > this.fpsInterval) {
+      if (elapsed > this.fpsInterval && !this.modalOpen) {
         this.then = now - (elapsed % this.fpsInterval);
 
         this.draw(this.frameCount);
@@ -662,7 +708,7 @@ export default {
 
       //custom parallax
       let cpxContainter = this.$refs.parallaxCustomContainer;
-      let fac = 4;
+      let fac = 3;
       this.customParallaxTargetPos =
         Math.max(
           -window.innerHeight / fac,
@@ -839,7 +885,6 @@ export default {
 
 .v-carousel__controls > .v-btn--active > .v-btn__content > i {
   color: #183e4b;
-  
 }
 
 .v-carousel__controls {
@@ -897,8 +942,7 @@ export default {
 }
 
 .click-me {
-  animation: wiggle 8s cubic-bezier(.6,.03,.39,1.2) forwards infinite;
-
+  animation: wiggle 7.5s cubic-bezier(0.6, 0.03, 0.39, 1.2) forwards infinite;
 }
 
 @keyframes wiggle {

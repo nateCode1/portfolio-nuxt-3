@@ -24,7 +24,7 @@ export default {
     longDescription: `Retiremint is a startup aimed at being an all-in-one retirement planning tool that encompasses all areas of retirement. I worked there in the summer of 2022 and 2023 as a part of a three person team.
     I joined the startup when they were working on the site beta using React JS and Material UI. After the site beta was published we switched to using Vue JS, Nuxt, and Vuetify. My duties included taking mockups and creating site pages based on them that work on all screen sizes. Pages often included dynamic elements including animated and reactive components. Developed a template to allow 12 pages for different areas of retirement to be generated with just JSON. Ended my first summer working for Retiremint by creating an internal tool to allow anyone to upload new content to a database, which would automatically be added to the site.
     In my second year working with Retiremint I continued doing my front-end work, but also began working in more of a back-end and design role. I implemented numerous full-stack features from start to finish including: Google single sign-on, a system to poll site users, and an automated mailing list that doesn't require an account.`,
-    images: ['retiremint/retiremintHome.png', 'retiremint/aiop.png', 'retiremint/learningCentre.png'],
+    images: ['/retiremint/retiremintHome.png', '/retiremint/aiop.png', '/retiremint/learningCentre.png'],
   },
   walmart: {
     name: 'Walmart',
@@ -46,7 +46,7 @@ export default {
       "Partnered with Queen's Fencing Club to create a program to webscrape tournament results and generate advanced statistics. Solo developed a program to compile statistics and export them into an excel-readable format using Node JS and Mongo DB. Guidance provided by PhD math student Luke Steverango.",
     longDescription: `During my first year as a member of Queen's Fencing Team, I noticed that stats were manually computed from data on a website which took approximately 50 hours each season. Seeing the potential to save a lot of time, I offered to automate this problem using a webscraper.
     Using Node JS and selenium, I created a way to find all the data on a given person from a tournament, then store it in Mongo DB. With the help of PhD math student Luke Steverango, I created a way to turn the basic information into advanced statistcs. The system is currently in use by the team, and has allowed more advanced statistics to be computed than is humanly feasible. So far in the 2023 season this system has saved over 30 hours.`,
-    images: ['qfcStats/main.png', 'qfcStats/stats.png',  'qfcStats/fetch.png'],
+    images: ['/qfcStats/main.png', '/qfcStats/stats.png',  '/qfcStats/fetch.png'],
   },
   pantryPilot: {
     name: 'Food App',
@@ -63,7 +63,7 @@ export default {
       "Created as part of my first-year studies at Queen's. This cross-platform app was designed in Figma, then developed using React Native. It allows students to track whats in their pantry, then reccomends recipes that use the food they already have. Available on the google play store and apple app store.",
     longDescription: `During my first year design course we were tasked with coming up with and creating innovation that used technology. We came up with Pantry Pilot, an app to help students cope with having to cook for themselves. It allows students to track what's in their pantry, and then reccomend them recipes to make with what they have. It also helps to prevent food loss by tracking the age of foods in the pantry.
     The app was designed and developed by me and one other student. It was designed in figma, then developed using React Native and Nativebase.IO. The app uses Spoonacular API for all of its food and recipe data. The app was built using Expo, and published to the Apple App Store and Google Play Store.`,
-    images: ['pantryPilot/playPage.png'],
+    images: ['/pantryPilot/playPage.png'],
   },
   campusCanvas: {
     name: 'Interactive Campus Map',
@@ -100,8 +100,10 @@ export default {
     name: 'A* Pathfinding Demo',
     date: [2022, 7],
     skills: [skills.javascript],
+    link: '/aStar/index.html',
     shortDescription:
       'A very simple pure JS implementation of the A star pathfinding algorithm. Created using HTML canvas. Supports customizable environments and movement patterns.',
+    images: ['/aStar/king.png', '/aStar/std.png', '/aStar/knight.png']
   },
   deobf: {
     name: 'HTML Canvas Game',
@@ -109,7 +111,8 @@ export default {
     skills: [skills.javascript],
     shortDescription:
       'Created as my final project for my Grade 12 computer science course. A platforming game written entirely using javascript and HTML canvas. Written using the principles of object oriented programming.',
-    link: 'pages/test.html',
+    link: '/deobf/page3.html',
+    images: ['/deobf/main.png', '/deobf/lv2.png', '/deobf/lv6.png',]
   },
   pacManPumpkin: {
     name: 'Pac Man Pumpkin',
@@ -118,6 +121,7 @@ export default {
     shortDescription:
       'Created for an instructables competition, a team of friends and I converted a pumpkin into a console that can play pac man. The device ran off an Arduino, and used an LED matrix. I programmed a majority of the game logic, using the Arduino language, a variaton on c++.',
     link: 'https://www.instructables.com/Make-a-Pumpkin-Into-a-Pacman-Playing-Game-Console/',
+    images: ['/pacmanPumpkin/main.png', '/pacmanPumpkin/meCarve.png', '/pacmanPumpkin/matrix.jpg',]
   },
   itch: {
     name: 'Itch.io Page',
@@ -133,7 +137,7 @@ export default {
     startDate: [2023, 6],
     endDate: [2023, 6],
     skills: [skills.blender],
-    images: ['blendJune/room.png', 'blendJune/house.png', 'blendJune/contraption.gif', 'blendJune/musg.png', 'blendJune/kayak.png', 'blendJune/sculpt.png', 'blendJune/ch&t.png', 'blendJune/sink.png',],
+    images: ['/blendJune/room.png', '/blendJune/house.png', '/blendJune/contraption.gif', '/blendJune/musg.png', '/blendJune/kayak.png', '/blendJune/sculpt.png', '/blendJune/ch&t.png', '/blendJune/sink.png',],
     shortDescription:
       'In June of 2023 I decided I wanted to learn 3D modelling, as all I previously knew was CAD tools. I challenged myself to create one render each day of the month, and to try to learn something new with each one. Forcing myself to create something each day was a great way to encourage learning and experimentation.',
     longDescription: `During the month of June 2023 I took on a challenge to create a render each day using Blender3D, and to try to learn something new with each one. The one day nature of each rendering meant that I would only spend 2-4 hours on each render, so if an experiment failed, I didn't lose too much time.

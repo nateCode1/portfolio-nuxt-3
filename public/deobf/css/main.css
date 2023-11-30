@@ -1,0 +1,319 @@
+* {
+	box-sizing: border-box;
+	margin: 0px;
+	padding: 0px;
+	font-size: 10px;
+}
+
+img{
+	width: 100%;
+}
+
+/*media*/
+@media screen and (max-width: 900px){
+	
+	/*mobile*/
+	
+	#maingrid{
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-gap: 3px;
+		width: 90%;
+		padding: 15px;
+		line-height: 1.2;
+	}
+	
+	section, header, footer{
+		padding: 8px;
+	}
+	
+	h1{
+		font-size: 4.6em;
+	}
+	h2{
+		font-size: 2.8em;
+		margin-bottom: 3px;
+	}
+	h3{
+		font-size: 2.2em;
+		text-decoration: underline;
+	}
+	h4, th{
+		font-size: 2.0em;
+	}
+	p, td{
+		font-size: 1.8em;
+		margin: 5px 0px;
+	}
+	a {
+		font-size: 2.4em;
+	}
+	b {
+		font-size: 1.1em;
+	}
+	
+	figcaption {
+		font-size: 1.6em;
+	}
+	header {
+		margin-top: 50px;
+	}
+}
+
+@media screen and (min-width: 901px) and (max-width: 1274px){
+	#maingrid{
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+		grid-gap: 12px;
+		width: 90%;
+		padding: 10px;
+		line-height: 1.1;
+	}
+	
+	section, header, footer{
+		padding: 8px;
+	}
+	
+	header, footer {
+		grid-column: 1/3;
+	}
+	
+	h1{
+		font-size: 4.8em;
+	}
+	h2{
+		font-size: 2.8em;
+		margin-bottom: 5px;
+	}
+	h3{
+		font-size: 2.4em;
+		text-decoration: underline;
+	}
+	h4, th{
+		font-size: 2.0em;
+	}
+	p, td, a{
+		font-size: 1.8em;
+		margin: 7px 0px;
+	}
+	a {
+		font-size: 2.2em;
+	}
+	b {
+		font-size: 1.1em;
+	}
+	
+	figcaption {
+		font-size: 1.6em;
+	}
+	
+	header {
+		margin-top: 60px;
+	}
+
+}
+@media screen and (min-width: 1275px){
+	
+	/* DESKTOP */
+	
+	#maingrid{
+		display: grid;
+		grid-template-columns: 1fr 3fr;
+		grid-gap: 8px;
+		width: 75%;
+		padding: 30px;
+		line-height: 1.2;
+	}
+	
+	header, footer {
+		grid-column: 1/3;
+	}
+	
+	section, header, footer{
+		padding: 15px;
+	}
+	
+	h1{
+		font-size: 6.0em;
+	}
+	h2{
+		font-size: 3.6em;
+		margin-bottom: 8px;
+	}
+	h3{
+		font-size: 2.6em;
+		text-decoration: underline;
+	}
+	h4, th{
+		font-size: 2.2em;
+	}
+	p, td, a{
+		font-size: 2.0em;
+		margin: 9px 0px;
+	}
+	a {
+		font-size: 2.6em;
+	}
+	b {
+		font-size: 1.1em;
+	}
+	
+	figcaption {
+		font-size: 1.8em;
+	}
+	
+	header {
+		margin-top: 70px;
+	}
+}
+
+@media print{
+	figure {
+		display: none;
+	}
+	h1{
+		font-size: 5.0em;
+	}
+	h2{
+		font-size: 3.2em;
+	}
+	h3{
+		font-size: 2.2em;
+		text-decoration: underline;
+	}
+	h4, th{
+		font-size: 1.9em;
+	}
+	p, td, li{
+		font-size: 1.6em;
+		margin-bottom: 5px;
+	}
+	b {
+		font-size: 0.8em;
+	}
+	figcaption {
+		font-size: 1.8em;
+	}
+	footer{
+		margin-top: 10px;
+		font-size: 0.7em;
+	}
+	nav {
+		display: none;
+	}
+}
+
+#maingrid{
+	margin: auto;
+	background-color: rgba(2,0,100,0.8);
+}
+
+.sec1 img {
+	border: 3px solid #E1E5F2;
+}
+
+body {
+	color: #E1E5F2;
+	font-family: Arial, Helvetica, sans-serif;
+	background-image: url("../images/circutBoard.png");
+}
+
+.hint {
+	background-color: #E1E5F2;
+	display: inline-block;
+}
+
+.hint:hover {
+	background-color: rgba(0,0,0,0);
+}
+
+th, td {
+	border: 1px solid #E1E5F2;
+	padding: 5px;
+}
+
+table {
+	border: 3px solid #E1E5F2;
+	width: 100%;
+}
+
+table img {
+	width: 100%;
+}
+
+p {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+h1 {
+	font-family: Courier New;
+}
+
+h1, h2 {
+	color: #a8ccff;
+}
+
+section{
+	background-color: #24758D;
+}
+
+header, footer{
+	background-color: #24758D;
+}
+
+a, a:visited{
+	color: #e8eddf;
+	text-decoration: none;
+}
+
+a:hover{
+	color: #9fa398;
+	text-decoration: underline;
+}
+
+header {
+	text-align: center;
+	border-radius: 10px;
+}
+
+.center {
+	text-align: center;
+}
+
+.headerBox {
+	background-color: rgba(0,0,100,0.3)
+}
+.sideBox {
+	background-color: rgba(50,0,100,0.1)
+}
+
+nav {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	border-bottom: 3px solid #269abd;
+	padding: 10px;
+	font-weight: bold;
+	background-image: url("../images/navImg.png");
+}
+
+figure {
+	margin: 10px 5px;
+	border: 3px solid #f5cb5c;
+	padding: 4px;
+	background-color: rgba(0,0,100,0.5)
+}
+
+#back {
+	z-index: -1;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-image: url("../images/circutBoard.png");
+}
