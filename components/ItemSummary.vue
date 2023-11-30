@@ -1,19 +1,26 @@
 <!-- Please remove this file from your project -->
 <template>
   <div>
+    <h3
+      :data-aos="animationDirection"
+      data-aos-delay="0"
+      style="font-size: 2.5rem"
+      class="text-center text-md-left"
+    >
+      {{ data.name }}
+    </h3>
     <div
-      class="d-flex justify-space-between"
-      :class="reverse ? 'flex-row-reverse' : ''"
+      class="d-flex justify-space-between text-center text-md-left"
+      :class="
+        $vuetify.display.smAndDown
+          ? 'flex-column-reverse'
+          : reverse
+          ? 'flex-row-reverse'
+          : ''
+      "
       style="gap: 30px"
     >
       <div>
-        <h3
-          :data-aos="animationDirection"
-          data-aos-delay="0"
-          style="font-size: 2.5rem"
-        >
-          {{ data.name }}
-        </h3>
         <h3
           :data-aos="animationDirection"
           data-aos-delay="100"
@@ -31,6 +38,14 @@
           {{ numberToMonth[data.startDate[1]] }} {{ data.startDate[0] }} -
           {{ numberToMonth[data.endDate[1]] }} {{ data.endDate[0] }}
         </h3>
+        <img
+          v-if="$vuetify.display.smAndDown && data.images && data.images[0]"
+          data-aos="fade"
+          class="my-5"
+          :src="data.images[0]"
+          fill
+          style="max-width: 100%; width: 100%; border-radius: 10px"
+        />
         <p
           :data-aos="animationDirection"
           data-aos-delay="200"
@@ -39,7 +54,7 @@
           {{ data.shortDescription }}
         </p>
       </div>
-      <div v-if="data.images && data.images[0]" class="d-flex align-center">
+      <div v-if="$vuetify.display.mdAndUp && data.images && data.images[0]" class="d-flex justify-center justify-md-left align-center">
         <img
           data-aos="fade"
           :src="data.images[0]"

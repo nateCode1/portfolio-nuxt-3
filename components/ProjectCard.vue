@@ -2,7 +2,7 @@
 <template>
   <div
     style="background-color: #1d1d1f; border-radius: 25px; height: 100%"
-    class="px-7 py-5 d-flex flex-column justify-space-between"
+    class="px-5 px-md-7 py-3 py-md-5 d-flex flex-column justify-space-between"
     :style="{
       boxShadow: '0px 0px 0px 5px #1d1d1f, inset 0px 0px 0px 1px ' + color,
     }"
@@ -47,11 +47,11 @@
     </div>
     <div
       data-aos="fade"
-      class="d-flex justify-center mt-2 mb-6"
+      class="d-flex justify-center mt-2 mb-3"
     >
       <v-btn
         v-if="!hideShowMore"
-        class="hover-effect"
+        class="hover-effect mt-4"
         @click="openModal(data)"
         :color="color"
         outlined

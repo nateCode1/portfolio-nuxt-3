@@ -6,6 +6,7 @@ export default {
   retiremint: {
     name: 'Retiremint',
     jobTitle: 'Junior Developer',
+    featured: true,
     skills: [
       skills.aws,
       skills.vueJS,
@@ -17,6 +18,7 @@ export default {
     ],
     startDate: [2022, 3],
     endDate: [2023, 9],
+    link: 'https://retiremint.ca',
     shortDescription:
       'Worked as part of a 3-person team in a startup environment developing a web-based product. Used Vue JS and Vuetify to create dynamic device-reactive pages. Created multiple full-stack systems including google single sign-on and an integrated tool to poll users.',
     longDescription: `Retiremint is a startup aimed at being an all-in-one retirement planning tool that encompasses all areas of retirement. I worked there in the summer of 2022 and 2023 as a part of a three person team.
@@ -36,14 +38,15 @@ export default {
   },
   fencingData: {
     name: 'Fencing Data Webscraper',
+    featured: true,
     startDate: [2023, 5],
     endDate: [2023, 9],
     skills: [skills.nodeJS, skills.mongoDB, skills.javascript],
     shortDescription:
       "Partnered with Queen's Fencing Club to create a program to webscrape tournament results and generate advanced statistics. Solo developed a program to compile statistics and export them into an excel-readable format using Node JS and Mongo DB. Guidance provided by PhD math student Luke Steverango.",
     longDescription: `During my first year as a member of Queen's Fencing Team, I noticed that stats were manually computed from data on a website which took approximately 50 hours each season. Seeing the potential to save a lot of time, I offered to automate this problem using a webscraper.
-    Using Node JS and selenium, I created a way to find all the data on a given person from a tournament, then store it in Mongo DB. With the help of PhD math student Luke Steverango, I created a way to turn the basic information into advanced statistcs. The system is currently in use by the team, and has allowed more advanced statistics to be computed, than is humanly feasible.`,
-    images: ['qfcStats.png'],
+    Using Node JS and selenium, I created a way to find all the data on a given person from a tournament, then store it in Mongo DB. With the help of PhD math student Luke Steverango, I created a way to turn the basic information into advanced statistcs. The system is currently in use by the team, and has allowed more advanced statistics to be computed than is humanly feasible. So far in the 2023 season this system has saved over 30 hours.`,
+    images: ['qfcStats/main.png', 'qfcStats/stats.png',  'qfcStats/fetch.png'],
   },
   pantryPilot: {
     name: 'Food App',
@@ -77,6 +80,8 @@ export default {
     ],
     shortDescription:
       'Working with fellow student David Lafleur created a containerized backend for an interactive map of campus that allows students to draw artwork one pixel at a time based on their location. Front-end is currently web-based, with plans to migrate to a flutter app.',
+    longDescription: `At the start of my second year I did a development sprint on an interactive campus map that allows students to "paint" pixels on a digital map of their campus. I worked on the project with David Lafleur, and together we build a containerized backend to allow the app to scale quickly if needed. The app used MQTT and Node JS along with an SQL database in order to both save the state of the map, but also to provide live updates as pixels were placed. Challenges arose in transmitting display data for millions of colours within an acceptable loading time, but by optimising SQL queries, and representing pixels with less data, load times were reduced to under 50ms on average.
+    This project is still in active development, with plans to replace the current web-based UI with a flutter app, to allow the integration of location services to improve user engagement. User authentication is also being developed, using a proprietary system to allow students to sign-in using their school ID.`,
   },
   nathanFM: {
     name: 'RFID Music Player',
@@ -126,10 +131,12 @@ export default {
   itch: {
     name: 'June Blender 3D Challenge',
     startDate: [2023, 6],
+    endDate: [2023, 6],
     skills: [skills.blender],
+    images: ['blendJune/room.png', 'blendJune/house.png', 'blendJune/contraption.gif', 'blendJune/musg.png', 'blendJune/kayak.png', 'blendJune/sculpt.png', 'blendJune/ch&t.png', 'blendJune/sink.png',],
     shortDescription:
       'In June of 2023 I decided I wanted to learn 3D modelling, as all I previously knew was CAD tools. I challenged myself to create one render each day of the month, and to try to learn something new with each one. Forcing myself to create something each day was a great way to encourage learning and experimentation.',
-    longDescription: `During the month of June 2023 I took on a challenge to create a render each day using blender, and to try to learn something new with each one. The one day nature of each rendering meant that I would only spend 2-4 hours on each render, so if an experiment failed, I didn't lose too much time.
-    During the month I worked learned the fundamentals of many skills including: hard-body modelling, lighting, sculpting, retopology, procedural geometry, animation, physics simuation, and procedural textures. Some of the highlights are shown below.`,
+    longDescription: `During the month of June 2023 I took on a challenge to create a render each day using Blender3D, and to try to learn something new with each one. The one day nature of each rendering meant that I would only spend 2-4 hours on each render, so if an experiment failed, I didn't lose too much time.
+    During the month I worked learned the fundamentals of many skills including: hard-body modelling, lighting, sculpting, retopology, procedural geometry, animation, physics simuation, and procedural textures. Some of the my favourites are shown below:`,
   },
 }
