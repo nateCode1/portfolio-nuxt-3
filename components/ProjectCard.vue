@@ -13,6 +13,8 @@
       style="gap: 30px"
     >
       <div>
+        <v-chip v-if="data.featured" prepend-icon="mdi-star-circle" class="mb-1" :color="color">Featured</v-chip>
+
         <h3
           :data-aos="animationDirection"
           data-aos-delay="0"

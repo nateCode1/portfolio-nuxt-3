@@ -101,7 +101,7 @@
                 <br /><br />
                 I've worked with
                 <span style="color: #fff"
-                  >app development, IOT, container archetecture, electrical
+                  >app development, IOT, container architecture, electrical
                   systems, and game development</span
                 >. I also have
                 <span style="color: #fff">professional experience</span> at a
@@ -144,7 +144,7 @@
               See More
             </h3>
           </div>
-          <v-tabs
+          <!-- <v-tabs
             v-model="tab"
             v-if="$vuetify.display.width >= 700"
             fixed-tabs
@@ -161,13 +161,14 @@
               :value="tab.value"
               >{{ tab.title }}</v-tab
             >
-          </v-tabs>
-          <div v-else class="d-flex justify-center flex-wrap">
+          </v-tabs> -->
+          <div class="d-flex justify-center flex-wrap">
             <v-btn
               v-for="btn in tabs"
               :key="btn.title"
-              class="tab"
-              :style="{'backgroundColor': tab == btn.value ? 'rgba(255, 195, 0, 0.4)' : 'rgba(255, 195, 0, 0.1)'}"
+              class="tab mx-3 px-5 rounded-xl"
+              style="transition: all 0.2s; height: 45px;"
+              :style="{'backgroundColor': tab == btn.value ? 'rgba(255, 195, 0, 0.4)' : 'rgba(255, 195, 0, 0.1)', 'transform': tab == btn.value ? 'scale(1.1)' : ''}"
               @click="tab = btn.value"
               >{{ btn.title }}
             </v-btn>
@@ -325,7 +326,7 @@
                       ECEi is an undergraduate program for Electrical and
                       Computer Engineering students with a focus on
                       entrepreneurship and innovation. In my first year I
-                      acheived a GPA of 4.0 of a possible 4.3.
+                      achieved a GPA of 4.0 of a possible 4.3.
                     </p>
                     <div
                       v-if="$vuetify.display.smAndDown"
@@ -345,7 +346,7 @@
                     </div>
                     <p data-aos="fade-right">
                       During my time at Queen's I've been involved in multiple
-                      extracirriculars. Most notably I am a member of the
+                      extracurricular. Most notably I am a member of the
                       Queen's Varsity Fencing Team. I have also recently joined
                       the Queen's Cloud Computing Club.
                     </p>
@@ -380,9 +381,9 @@
                     <p data-aos="fade-left">
                       In high school I was part of the AP program. I graduated
                       with high honours, and was awarded a scholarship by the
-                      faculty of science. Additionally I recieved the graduating
+                      faculty of science. Additionally I received the graduating
                       award for AP Calculus, Computer Science, and AP English. I
-                      recieved a perfect grade on the AP chemistry exam and a
+                      received a perfect grade on the AP chemistry exam and a
                       4/5 on AP computer science.
                     </p>
                   </v-col>
@@ -397,15 +398,15 @@
                       src="/education/sacred.jpg"
                     />
                   </v-col>
-                  <v-col v-if="$vuetify.display.lgAndUp" cols="5">
+                  <!-- <v-col v-if="$vuetify.display.lgAndUp" cols="5">
                     <v-img
                       data-aos="fade"
                       style="max-width: 100%; border-radius: 10px"
                       :style="{ border: '2px solid ' + theme.tYellow }"
                       src="/education/sacred.jpg"
                     />
-                  </v-col>
-                  <v-col :cols="$vuetify.display.lgAndUp ? 7 : 12">
+                  </v-col> -->
+                  <v-col cols="12">
                     <p data-aos="fade-left">
                       Throughout high school I was very involved with the school
                       community. I was a member of the school's AV club, and
@@ -448,7 +449,7 @@
                 outlined
                 :color="theme.tGreen"
                 style="font-size: 1.1rem; height: 40px"
-                class="click-me hover-effect text-white font-weight px-5 rounded-xl mr-md-8"
+                class="click-me hover-effect text-white font-weight px-5 rounded-xl mb-2 mr-md-8"
                 >Visit Project</v-btn
               ></a
             >
@@ -574,7 +575,7 @@ export default {
         "MongoDB",
         "MQTT",
         "Angular JS",
-        "Container Archetecture",
+        "Container Architecture",
         "Back-End Development",
         "Nuxt JS",
         "Next JS",
