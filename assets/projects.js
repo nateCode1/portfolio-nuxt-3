@@ -49,7 +49,7 @@ export default {
     images: ['/qfcStats/main.png', '/qfcStats/stats.png',  '/qfcStats/fetch.png'],
   },
   pantryPilot: {
-    name: 'Food App',
+    name: 'Student Food App',
     startDate: [2023, 2],
     endDate: [2023, 5],
     skills: [
@@ -59,6 +59,7 @@ export default {
       skills.typescript,
       skills.github,
     ],
+    link: 'https://davlaf.com/pantry-pilot/',
     shortDescription:
       "Created as part of my first-year studies at Queen's. This cross-platform app was designed in Figma, then developed using React Native. It allows students to track whats in their pantry, then reccomends recipes that use the food they already have. Available on the google play store and apple app store.",
     longDescription: `During my first year design course we were tasked with coming up with and creating innovation that used technology. We came up with Pantry Pilot, an app to help students cope with having to cook for themselves. It allows students to track what's in their pantry, and then recommend them recipes to make with what they have. It also helps to prevent food loss by tracking the age of foods in the pantry.
@@ -69,6 +70,7 @@ export default {
     name: 'Interactive Campus Map',
     startDate: [2023, 9],
     ongoing: true,
+    link: 'https://davlaf.com/cc/',
     skills: [
       skills.nodeJS,
       skills.kubernetes,
@@ -80,7 +82,8 @@ export default {
     ],
     shortDescription:
       'Working with fellow student David Lafleur created a containerized backend for an interactive map of campus that allows students to draw artwork one pixel at a time based on their location. Front-end is currently web-based, with plans to migrate to a flutter app.',
-    longDescription: `At the start of my second year I did a development sprint on an interactive campus map that allows students to "paint" pixels on a digital map of their campus. I worked on the project with David Lafleur, and together we build a containerized backend to allow the app to scale quickly if needed. The app used MQTT and Node JS along with an SQL database in order to both save the state of the map, but also to provide live updates as pixels were placed. Challenges arose in transmitting display data for millions of colours within an acceptable loading time, but by optimizing SQL queries, and representing pixels with less data, load times were reduced to under 50ms on average.
+    longDescription: `*This project is under active development, so uptime may be spotty*
+    At the start of my second year I did a development sprint on an interactive campus map that allows students to "paint" pixels on a digital map of their campus. I worked on the project with David Lafleur, and together we build a containerized backend to allow the app to scale quickly if needed. The app used MQTT and Node JS along with an SQL database in order to both save the state of the map, but also to provide live updates as pixels were placed. Challenges arose in transmitting display data for millions of colours within an acceptable loading time, but by optimizing SQL queries, and representing pixels with less data, load times were reduced to under 50ms on average.
     This project is still in active development, with plans to replace the current web-based UI with a flutter app, to allow the integration of location services to improve user engagement. User authentication is also being developed, using a proprietary system to allow students to sign-in using their school ID.`,
   },
   nathanFM: {
@@ -132,7 +135,7 @@ export default {
       'My itch.io page. Currently contains three solo-developed games, two of which are from game jams. All games were made using Unity 2D. I still work on game development from time to time, and will update the itch page as projects are finished.',
     link: 'https://shrek5x.itch.io/',
   },
-  itch: {
+  blenderJune: {
     name: 'June Blender 3D Challenge',
     startDate: [2023, 6],
     endDate: [2023, 6],
@@ -143,4 +146,18 @@ export default {
     longDescription: `During the month of June 2023 I took on a challenge to create a render each day using Blender3D, and to try to learn something new with each one. The one day nature of each rendering meant that I would only spend 2-4 hours on each render, so if an experiment failed, I didn't lose too much time.
     During the month I worked learned the fundamentals of many skills including: hard-body modelling, lighting, sculpting, retopology, procedural geometry, animation, physics simulation, and procedural textures. Some of the my favourites are shown below:`,
   },
+  portfolioSite: {
+    name: 'Portfolio Website',
+    startDate: [2023, 11],
+    skills: [
+      skills.vueJS,
+      skills.nuxtJS,
+      skills.vuetify,
+      skills.github,
+    ],
+    ongoing: true,
+    shortDescription: 'Created as a home for all my projects, this site was built using Nuxt3 and Vuetify. I designed and developed the site from the ground up. I created custom systems for dynamic backgrounds, and even created some of the assets myself using Blender3D. The site is highly scalable, and new projects can be included just by altering a json file.',
+    link: '/',
+    images: ['/portfolio/hero.png', '/portfolio/r2.png', '/portfolio/recursion.png'],
+  }
 }
