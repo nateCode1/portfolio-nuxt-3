@@ -340,7 +340,7 @@
                           border-radius: 10px;
                         "
                         :style="{ border: '2px solid ' + theme.tBlue }"
-                        src="/education/academicAllStar.jpg"
+                        src="/education/academicAllstar.jpg"
                       />
                     </div>
                     <p data-aos="fade-right">
