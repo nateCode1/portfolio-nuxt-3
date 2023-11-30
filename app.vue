@@ -4,7 +4,7 @@
       <v-parallax
         style="height: 100vh; max-height: 800px"
         class="d-flex align-center"
-        src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+        src="/hero.jpg"
       >
         <div class="mb-auto text-center" style="padding-bottom: 100px">
           <h1
@@ -66,7 +66,7 @@
               data-aos-delay="200"
               class="pa-2 d-flex rounded-lg"
               style="
-                background-image: url(https://cdn.vuetifyjs.com/images/parallax/material.jpg);
+                background-image: url(/hero.jpg);
                 background-size: 100% 100%;
                 z-index: 5;
                 max-width: 100%;
@@ -642,7 +642,7 @@ export default {
       this.allNodes = [];
 
       let spacing = 100;
-      let overflow = spacing / 2;
+      let overflow = spacing;
       let cols =
         Math.floor((this.$refs.aboutMeCanvas.width + 2 * overflow) / spacing) +
         1;
