@@ -191,7 +191,7 @@
           ref="parallaxCustom"
           src="/test1BgPf.png"
           style="
-            filter: brightness(120%) contrast(110%);
+            filter: brightness(110%) contrast(110%);
             width: 100%;
             position: absolute;
             left: 0;
@@ -583,6 +583,9 @@ export default {
     };
   },
   mounted() {
+    //title
+    document.title = 'Nathan Harrison'
+
     this.theme = this.$vuetify.theme.themes.custom;
 
     this.colors = [
