@@ -167,8 +167,14 @@
               v-for="btn in tabs"
               :key="btn.title"
               class="tab mx-3 px-5 rounded-xl"
-              style="transition: all 0.2s; height: 45px;"
-              :style="{'backgroundColor': tab == btn.value ? 'rgba(255, 195, 0, 0.4)' : 'rgba(255, 195, 0, 0.1)', 'transform': tab == btn.value ? 'scale(1.1)' : ''}"
+              style="transition: all 0.2s; height: 45px"
+              :style="{
+                backgroundColor:
+                  tab == btn.value
+                    ? 'rgba(255, 195, 0, 0.4)'
+                    : 'rgba(255, 195, 0, 0.1)',
+                transform: tab == btn.value ? 'scale(1.1)' : '',
+              }"
               @click="tab = btn.value"
               >{{ btn.title }}
             </v-btn>
@@ -217,7 +223,7 @@
               </div>
               <div
                 style="background-color: #1d1d1f; border-radius: 20px"
-                class="pa-7 pb-2"
+                class="pa-md-7 pa-2 pb-2"
               >
                 <ItemSummary
                   :data="projects.retiremint"
@@ -346,9 +352,9 @@
                     </div>
                     <p data-aos="fade-right">
                       During my time at Queen's I've been involved in multiple
-                      extracurricular. Most notably I am a member of the
-                      Queen's Varsity Fencing Team. I have also recently joined
-                      the Queen's Cloud Computing Club.
+                      extracurricular. Most notably I am a member of the Queen's
+                      Varsity Fencing Team. I have also recently joined the
+                      Queen's Cloud Computing Club.
                     </p>
                   </div>
                   <div v-if="$vuetify.display.mdAndUp">
@@ -429,9 +435,10 @@
         <v-card
           v-if="modalData"
           style="max-width: 100%; width: 850px; border-radius: 15px"
-          class="mx-auto pa-5"
+          class="mx-auto pa-3 pa-md-5"
         >
           <v-btn
+            v-if="$vuetify.mdAndUp"
             @click="modalOpen = false"
             icon
             style="position: absolute; right: 10px; top: 10px"
@@ -443,19 +450,22 @@
             class="d-flex flex-column flex-md-row align-center justify-center justify-md-space-between"
           >
             <h1 style="font-size: 3rem" class="mb-2">{{ modalData.name }}</h1>
-            <a v-if="modalData.link" :href="modalData.link" target="blank"
-              ><v-btn
-                x-large
-                outlined
-                :color="theme.tGreen"
-                style="font-size: 1.1rem; height: 40px"
-                class="click-me hover-effect text-white font-weight px-5 rounded-xl mb-2 mr-md-8"
-                >Visit Project</v-btn
-              ></a
-            >
+            <div class="d-flex justify-space-between justify-md-end flex-wrap w-100 align-center" style="gap: 5px;">
+              <a v-if="modalData.link" :href="modalData.link" target="blank"
+                ><v-btn
+                  x-large
+                  outlined
+                  :color="theme.tGreen"
+                  style="font-size: 1.1rem; height: 40px"
+                  class="click-me hover-effect text-white font-weight px-5 rounded-xl mb-md-2 mr-md-8"
+                  >Visit Project</v-btn
+                ></a
+              >
+              <v-btn @click="modalOpen = false" v-if="$vuetify.display.smAndDown" class="rounded-lg">Close</v-btn>
+            </div>
           </v-card-title>
-          <v-card-text class="mt-2 show-scroll" style="overflow-y: scroll">
-            <div class="d-flex flex-wrap mb-3" style="gap: 10px">
+          <v-card-text class="mt-2 pa-1 pa-md-4 show-scroll" style="overflow-y: scroll">
+            <div class="d-flex justify-center justify-md-left flex-wrap mb-3" style="gap: 10px">
               <v-chip
                 v-for="skill in modalData.skills"
                 :key="skill.name"
@@ -465,7 +475,7 @@
                 >{{ skill.name }}</v-chip
               >
             </div>
-            <div v-if="modalData.longDescription" class="px-5 mt-5">
+            <div v-if="modalData.longDescription" class="px-md-5 mt-5">
               <p
                 v-for="paragraph in modalData.longDescription.split('\n')"
                 :key="paragraph"
@@ -475,7 +485,7 @@
                 {{ paragraph }}
               </p>
             </div>
-            <p v-else-if="modalData.shortDescription" class="px-5 mt-5">
+            <p v-else-if="modalData.shortDescription" class="px-md-5 mt-5">
               {{ modalData.shortDescription }}
             </p>
 
@@ -491,7 +501,16 @@
               class="mt-3"
               style="border-radius: 15px"
             >
-              <v-carousel style="max-height: 300px">
+              <div v-if="$vuetify.display.smAndDown" class="d-flex justify-space-between w-100 mb-2">
+                <v-btn @click="incrementCarousel(-1)" size="large" prepend-icon="mdi-chevron-left">Prev</v-btn>
+                <v-btn @click="incrementCarousel(1)" size="large" append-icon="mdi-chevron-right">Next</v-btn>
+              </div>
+              <v-carousel 
+                style="border: 1px solid #333; border-radius: 20px;"
+                :style="{maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px'}"
+                :show-arrows="$vuetify.display.mdAndUp"
+                v-model="carouselPos"
+              >
                 <v-carousel-item
                   v-for="image in modalData.images"
                   :key="image"
@@ -500,10 +519,10 @@
                 >
                   <img
                     :src="image"
+                    :style="{maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px'}"
                     style="
                       width: 100%;
                       height: 100%;
-                      max-height: 300px;
                       object-fit: contain;
                     "
                   />
@@ -561,6 +580,8 @@ export default {
       mouseY: null,
       scrollPos: null,
 
+      carouselPos: 0,
+
       activeSubtitles: [],
       allSubtitles: [
         "Node JS",
@@ -584,7 +605,7 @@ export default {
   },
   mounted() {
     //title
-    document.title = 'Nathan Harrison'
+    document.title = "Nathan Harrison";
 
     this.theme = this.$vuetify.theme.themes.custom;
 
@@ -849,6 +870,14 @@ export default {
     openModal(data) {
       this.modalData = data;
       this.modalOpen = true;
+    },
+
+    incrementCarousel(change) {
+      this.carouselPos += change
+
+      if (this.carouselPos < 0) this.carouselPos += this.modalData.images.length;
+      if (this.carouselPos >= this.modalData.images.length) this.carouselPos -= this.modalData.images.length;
+      
     },
 
     shuffle(array) {
