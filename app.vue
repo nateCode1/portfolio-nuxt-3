@@ -40,7 +40,7 @@
       </v-parallax>
       <canvas
         ref="aboutMeCanvas"
-        style="position: absolute; z-index: 0; filter: brightness(35%)"
+        style="position: absolute; z-index: 0; filter: brightness(37%)"
         :key="'00'"
       />
       <div
@@ -123,7 +123,7 @@
           <v-col cols="12" md="4" class="contact">
             <v-icon large>mdi-linkedin</v-icon>
             <p>
-              <a target="blank" href="www.linkedin.com/in/nathan-harrison-dev"
+              <a target="blank" href="https://www.linkedin.com/in/nathan-harrison-dev/"
                 >Linkedin Page</a
               >
             </p>
@@ -226,6 +226,26 @@
                 class="pa-md-7 pa-2 pb-2"
               >
                 <ItemSummary
+                  :data="projects.orbcomm"
+                  :openModal="openModal"
+                  :reverse="false"
+                  :hideShowMore="true"
+                />
+                <div
+                  class="mx-auto my-6 rounded"
+                  style="width: 75%; height: 2px; background-color: white"
+                />
+                <ItemSummary
+                  :data="projects.rcvLabs"
+                  :openModal="openModal"
+                  :reverse="true"
+                  :hideShowMore="true"
+                />
+                <div
+                  class="mx-auto my-6 rounded"
+                  style="width: 75%; height: 2px; background-color: white"
+                />
+                <ItemSummary
                   :data="projects.retiremint"
                   :openModal="openModal"
                   :reverse="false"
@@ -327,12 +347,12 @@
                 <div class="d-flex align-center">
                   <div>
                     <p data-aos="fade-right" class="mb-2">
-                      I'm currently in my second year at Queen's University,
+                      I'm currently in my third year at Queen's University,
                       studying Computer Engineering as part of the ECEi program.
                       ECEi is an undergraduate program for Electrical and
                       Computer Engineering students with a focus on
-                      entrepreneurship and innovation. In my first year I
-                      achieved a GPA of 4.0 of a possible 4.3.
+                      entrepreneurship and innovation. After 1st semester of 3rd
+                      year I have achieved cumulative GPA of 4.18/4.3.
                     </p>
                     <div
                       v-if="$vuetify.display.smAndDown"
@@ -353,8 +373,9 @@
                     <p data-aos="fade-right">
                       During my time at Queen's I've been involved in multiple
                       extracurricular. Most notably I am a member of the Queen's
-                      Varsity Fencing Team. I have also recently joined the
-                      Queen's Cloud Computing Club.
+                      Varsity Fencing Team. This year, I have also become a server
+                      administrator for the Sci 65' electrical and computer
+                      engineering lab.
                     </p>
                   </div>
                   <div v-if="$vuetify.display.mdAndUp">
@@ -450,7 +471,10 @@
             class="d-flex flex-column flex-md-row align-center justify-center justify-md-space-between"
           >
             <h1 style="font-size: 3rem" class="mb-2">{{ modalData.name }}</h1>
-            <div class="d-flex justify-space-between justify-md-end flex-wrap w-100 align-center" style="gap: 5px;">
+            <div
+              class="d-flex justify-space-between justify-md-end flex-wrap w-100 align-center"
+              style="gap: 5px"
+            >
               <a v-if="modalData.link" :href="modalData.link" target="blank"
                 ><v-btn
                   x-large
@@ -461,11 +485,22 @@
                   >Visit Project</v-btn
                 ></a
               >
-              <v-btn @click="modalOpen = false" v-if="$vuetify.display.smAndDown" class="rounded-lg">Close</v-btn>
+              <v-btn
+                @click="modalOpen = false"
+                v-if="$vuetify.display.smAndDown"
+                class="rounded-lg"
+                >Close</v-btn
+              >
             </div>
           </v-card-title>
-          <v-card-text class="mt-2 pa-1 pa-md-4 show-scroll" style="overflow-y: scroll">
-            <div class="d-flex justify-center justify-md-left flex-wrap mb-3" style="gap: 10px">
+          <v-card-text
+            class="mt-2 pa-1 pa-md-4 show-scroll"
+            style="overflow-y: scroll"
+          >
+            <div
+              class="d-flex justify-center justify-md-left flex-wrap mb-3"
+              style="gap: 10px"
+            >
               <v-chip
                 v-for="skill in modalData.skills"
                 :key="skill.name"
@@ -496,18 +531,36 @@
             >
               Gallery
             </h1>
+            <div v-if="modalData.video" class="w-100 d-flex justify-center">
+                <iframe max-width="100%" width="560" height="315" :src="modalData.video" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
             <div
               v-if="modalData.images && modalData.images[1]"
               class="mt-3"
               style="border-radius: 15px"
             >
-              <div v-if="$vuetify.display.smAndDown" class="d-flex justify-space-between w-100 mb-2">
-                <v-btn @click="incrementCarousel(-1)" size="large" prepend-icon="mdi-chevron-left">Prev</v-btn>
-                <v-btn @click="incrementCarousel(1)" size="large" append-icon="mdi-chevron-right">Next</v-btn>
+              <div
+                v-if="$vuetify.display.smAndDown"
+                class="d-flex justify-space-between w-100 mb-2"
+              >
+                <v-btn
+                  @click="incrementCarousel(-1)"
+                  size="large"
+                  prepend-icon="mdi-chevron-left"
+                  >Prev</v-btn
+                >
+                <v-btn
+                  @click="incrementCarousel(1)"
+                  size="large"
+                  append-icon="mdi-chevron-right"
+                  >Next</v-btn
+                >
               </div>
-              <v-carousel 
-                style="border: 1px solid #333; border-radius: 20px;"
-                :style="{maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px'}"
+              <v-carousel
+                style="border: 1px solid #333; border-radius: 20px"
+                :style="{
+                  maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px',
+                }"
                 :show-arrows="$vuetify.display.mdAndUp"
                 v-model="carouselPos"
               >
@@ -519,12 +572,10 @@
                 >
                   <img
                     :src="image"
-                    :style="{maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px'}"
-                    style="
-                      width: 100%;
-                      height: 100%;
-                      object-fit: contain;
-                    "
+                    :style="{
+                      maxHeight: $vuetify.display.mdAndUp ? '300px' : '180px',
+                    }"
+                    style="width: 100%; height: 100%; object-fit: contain"
                   />
                 </v-carousel-item>
               </v-carousel>
@@ -589,17 +640,17 @@ export default {
         "React JS",
         "Vue JS",
         "C#",
-        "Front-End Development",
         "C",
         "SQL",
         "AWS",
         "MongoDB",
+        "SQL",
         "MQTT",
-        "Angular JS",
+        "Svelte",
         "Container Architecture",
-        "Back-End Development",
-        "Nuxt JS",
-        "Next JS",
+        "OpenGL",
+        "TensorFlow",
+        "PyTorch",
       ],
     };
   },
@@ -645,7 +696,7 @@ export default {
   methods: {
     handleResize(event) {
       this.$refs.aboutMeCanvas.width = window.innerWidth;
-      this.$refs.aboutMeCanvas.height = this.$refs.aboutMe.offsetHeight;
+      this.$refs.aboutMeCanvas.height = this.$refs.aboutMe.offsetHeight + 20;
 
       //canvas!
       class Node {
@@ -873,11 +924,12 @@ export default {
     },
 
     incrementCarousel(change) {
-      this.carouselPos += change
+      this.carouselPos += change;
 
-      if (this.carouselPos < 0) this.carouselPos += this.modalData.images.length;
-      if (this.carouselPos >= this.modalData.images.length) this.carouselPos -= this.modalData.images.length;
-      
+      if (this.carouselPos < 0)
+        this.carouselPos += this.modalData.images.length;
+      if (this.carouselPos >= this.modalData.images.length)
+        this.carouselPos -= this.modalData.images.length;
     },
 
     shuffle(array) {

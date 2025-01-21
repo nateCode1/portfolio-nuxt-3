@@ -36,7 +36,7 @@
           style="font-weight: 100"
         >
           {{ numberToMonth[data.startDate[1]] }} {{ data.startDate[0] }} -
-          {{ numberToMonth[data.endDate[1]] }} {{ data.endDate[0] }}
+          {{ data.endDate ? numberToMonth[data.endDate[1]] : "Present" }} {{ data.endDate ? data.endDate[0] : "" }}
         </h3>
         <img
           v-if="$vuetify.display.smAndDown && data.images && data.images[0]"
