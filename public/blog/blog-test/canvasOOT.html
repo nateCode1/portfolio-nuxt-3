@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+	
+	<head>
+		<meta charset="utf-8"/>
+		<title>Canvas Time</title>
+		<style>
+			
+			*{
+				margin: 0px;
+				padding: 0px;
+				box-sizing: border-box;
+			}
+			
+			html, body {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			
+			#canv1 {
+				display: block;
+				background-color: gray;
+			}
+		</style>
+		<script>
+		
+		var c1;
+		var rowAmnt;
+		var colAmnt;
+		var ctx;
+		var sqrs = [];
+		var score = 50;
+		
+		function getCursorPosition(canvas, event) {
+			const rect = canvas.getBoundingClientRect()
+			const x = event.clientX - rect.left
+			const y = event.clientY - rect.top
+			for (var i = 0; i < sqrs.length; i++){
+				if (sqrs[i].checkCollide(x,y)){
+					sqrs.splice(i, 1);
+				}
+			}
+			score -= 1;
+		}
+		
+		function randInt(min, max) {
+			return Math.floor(Math.random() * (max - min) ) + min;
+		}
+		
+		function frame() {
+			requestAnimationFrame(frame);
+			
+			ctx.fillStyle = "#006688"
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			ctx.fillStyle = "rgb(0,200,100)"
+			ctx.font = "50px Arial";
+			ctx.fillText("Score: " + score, 10, 50);
+			
+			ctx.fillStyle = "rgba(255,255,255,0.6)"
+			for (var i = 0; i < sqrs.length; i++){
+				sqrs[i].frameUpdate();
+				sqrs[i].draw();
+			}
+		}
+		
+		function boxConstruct(x, y, xsp, ysp, size) {
+			this.x = x;
+			this.y = y;
+			this.xsp = xsp;
+			this.ysp = ysp;
+			this.size = size;
+			this.frameUpdate = function() {
+				this.x += xsp;
+				this.y += ysp;
+				
+				if (this.x <= 0 || this.x + this.size >= c1.width){
+					this.x = Math.min(this.x, c1.width - 1 - this.size);
+					this.x = Math.max(this.x, 0 + 1);
+					xsp *= -1;
+				}
+				if (this.y <= 0 || this.y + this.size >= c1.height){
+					this.y = Math.min(this.y, c1.height - 1 - this.size);
+					this.y = Math.max(this.y, 0 + 1);
+					ysp *= -1;
+				}
+			}
+			
+			this.draw = function() {
+				ctx.fillRect(this.x, this.y, this.size, this.size);
+			}
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.size && testY > this.y && testY < this.y + this.size){
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		document.addEventListener("DOMContentLoaded", function() {
+			c1 = document.getElementById("canv1");
+			ctx = document.getElementById("canv1").getContext("2d");
+			
+			c1.width = window.innerWidth;
+			c1.height = window.innerHeight;
+			
+			const canvas = document.querySelector('canvas')
+			canvas.addEventListener('mousedown', function(e) {
+				getCursorPosition(canvas, e)
+			})
+			
+			for (var i = 0; i < 20; i++){
+				sqrs.push(new boxConstruct(randInt(0, c1.width / 3), randInt(0, c1.height / 3), randInt(-15,15), randInt(-15,15), randInt(50,250)));
+			}
+			frame();
+			
+		});
+		
+		window.addEventListener("resize", function(){
+			c1.width = window.innerWidth;
+			c1.height = window.innerHeight;
+		});
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="canv1" width="1900" height="930" style="border:1px solid #000;"></canvas>
+	</body>
+	
+</html>

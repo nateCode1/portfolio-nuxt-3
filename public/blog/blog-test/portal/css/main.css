@@ -1,0 +1,192 @@
+body { 
+	background-color: #198EEF; 
+	line-height: 175%; 
+	font-family: Verdana, Geneva, sans-serif;
+	animation-name: backgroundA;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+}
+
+h2, h3, h4, h5, h6, p {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	color: #198EEF;
+}
+
+p {
+	font-weight: 600;
+}
+
+h1 {
+	line-height: 150%;
+	text-decoration: underline;
+	font-weight: bold;
+	text-align: center;
+	padding-bottom: 8px;
+	font-size: 46px;
+	margin-top: 30px;
+	margin-bottom: 25px;
+}
+
+h2 {
+	font-size: 36px;
+}
+
+h3 {
+	font-size: 30px;
+	text-decoration: underline;
+}
+
+h4 {
+	font-size: 24px;
+	text-decoration: underline;
+}
+
+#container {
+	color: #198EEF;
+	background-color: #FFFFFF;
+	width: 65%;
+	margin: 0px auto;
+	padding: 15px 2%;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+
+table, th, td {
+	border: 2px solid #000089;
+	color: rgba(0, 0, 137, 0.7);
+}
+
+@keyframes backgroundA {
+		0%  {background-color: #198EEF;}
+		33% {background-color: #1967EF;}
+		66% {background-color: #1946EF;}
+	}
+
+/*######################################################## slider ######################################*/
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent; 
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 2px solid black;
+  height: 24px;
+  width: 16px;
+  border-radius: 3px;
+  background: #FFFFFF;
+  cursor: pointer;
+  margin-top: -9px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: #198EEF;
+  border-radius: 1.3px;
+  border: 1px solid black;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #198EEF;
+}
+
+/*########################################## Text/Color/Button/Number ###################################*/
+
+input[type=text], input[type=color], button, input[type=number] {
+	border: 2px solid #198EEF; 
+	padding: 4px;
+	background: rgba(250,250,250,0.6);
+	margin: 0 0 10px 0;
+	font-weight: bold;
+	font-size: 16px;
+	outline: none;
+}
+
+input[type=text] {
+	padding: 7px;
+	width: 200px;
+	outline: none;
+}
+
+button {
+	margin-top: 5px;
+	font-weight: 400;
+}
+
+/*####################################################### Checkbox #######################################*/
+input[type=checkbox] { 
+	-webkit-appearance: none;
+	margin-top: 9px;
+	background-color: #FFFFFF;
+	border: 2px solid black;
+	padding: 10px;
+	border-radius: 3px; 
+	display: inline-block; 
+	position: relative; 
+	outline: none;
+	vertical-align: -8px;
+}
+
+input[type=checkbox]:checked {
+	background-color: #198EEF; 
+	outline: none;
+}
+
+input[type=checkbox]:checked:after { 
+	content: '\2714';
+	font-size: 14px;
+	position: absolute;
+	top: 0px;
+	left: 3px;
+	color: black;
+}
+
+/*######################################################### Radio Buttons ##############################*/
+
+input[type=radio] {
+	outline: none;
+	-webkit-appearance: none;
+	background-color: #ffffff;
+	border: 2px solid black;
+	padding: 9px;
+	border-radius: 20px;
+	display: inline-block;
+	position: relative;
+}
+
+input[type=radio]:checked:after {
+	content: ' ';
+	width: 12px;
+	height: 12px;
+	border-radius: 20px;
+	position: absolute;
+	top: 3px;
+	background: #198EEF ;
+	left: 3px;
+	font-size: 32px;
+}
+
+input[type=radio]:checked {
+	outline: none;
+	background-color: #e9ecee;
+	color: #198EEF ;
+}
+
+.wide{
+	width: 100%;
+	height: 50px;
+}

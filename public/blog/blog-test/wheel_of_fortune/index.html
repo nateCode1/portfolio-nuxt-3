@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+	
+	<head>
+		<meta charset="utf-8"/>
+		<title>Wheeeeeeeeeeeeeeeeeel of Fortune</title>
+		<style>
+			
+			*{
+				margin: 0px;
+				padding: 0px;
+				box-sizing: border-box;
+			}
+			
+			html, body {
+				width: 100%;
+				height: 100%;
+				
+				overflow: hidden;
+			}
+			
+			#canv1 {
+				display: block;
+				/*min-width: 800px; didnt work how i wanted it too, but still a reccomended minimum as below this things get glitchy*/
+				background-color: gray;
+			}
+		</style>
+		<script>
+		//Mr q I made some variables global even when they didnt strictly have to be, it makes the code much more readable for you
+		var c1;
+		var ctx;
+		//the strings are hard coded to the right length, was going to make a function for it, but its too much effort, and I already did that in python before so I dont really feel like doing it again
+		var phrase = ["    fire    " + "   in the   " + "    hole         ", "  justice   " + " rains from " + "   above         ", "cheers love " + "the cavalrys " + "   here        ", "  oh lets   " + "  break it  " + "    down       ", "   heroes   " + "   never   " + "    die       ", "   cease    " + "    your    " + " resistance       ", " surrender  " + "   to my    " + "    will        ", "  ive got   " + " you in my  " + "   sights       "] //strings look weird here, its just so I can read them easier ######### USE ULT VOICE LINES ########
+		var wordBoxes = [];
+		var gameState = "tutorial"; //tutorial -> wheel -> consonant -> choice -> solve -> nextTurn |?| endRound |3| results
+		//the above comment was for personal use, just a reminder of the flow of the game for myself
+		var allButtons = [];
+		var wheelRotation = 0; //two variables used for the spinning wheel
+		var isSpinning = false;
+		var wheelSpeed = 100; //set to 100 as the code recognises that as meaning "to be left alone", tried to use -Math.Infinity, but that made it NaN
+		var currMoneyVal = 0; //stores the money value rolled
+		var playerMoney = 0; // tracks player
+		var AImoney = 0; //tracks AI money
+		var vowelCost = 300; //cost of a vowel to purchase for AI and player
+		var nextTurnText = "Unfortunate!"; //sets default text in case it isnt set where it should be for some reason
+		var nextRoundText = "Here are the results"; //sets default text in case it isnt set where it should be for some reason
+		var roundOn = 1; //tracks the current round of the game
+		var AIhadTurn = false; //used so Bil doesn't take a turn every frame
+		var firstAIturnEver = true; //used so Bil is garunteed a correct guess on his first turn so he doesn't appear broken
+		
+		//Objects
+		function button(x, y, width, height, color, gameState, activeGamestate, text) { //a button is an object to be instantiated at other points in the code, it contains the information and functions needed to draw, detect clicks, and perform a function based on the click
+			this.gameState = gameState; //this variable allows the game to change the current gameState to whatever this is set to when it is clicked
+			this.activeGamestate = activeGamestate; //game state required for the button to be clicked
+			this.text = text; //text to draw on button
+			this.y = y;
+			this.x = x;
+			this.color = color;
+			this.width = width;
+			this.height = height;
+			
+			this.checkCollide = function(testX, testY) { //this function takes coordinates on the canvas and then checks if they fall within this button, this is used on mousedown to detect a click of the button
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+			this.draw = function() { //this takes information from the object and uses it to draw a box, and then text within it
+				ctx.fillStyle = this.color;
+				ctx.strokeStyle = "#000000";
+				ctx.lineWidth = 4;
+				ctx.beginPath();
+				ctx.rect(this.x, this.y, this.width, this.height);
+				ctx.fill();
+				ctx.stroke();
+				//text
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(this.width * 1.1, this.height * 0.7) + "px Arial"; //sets the font size based on the size of the box
+				ctx.textAlign = "center";
+				ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height * 0.8);
+			}
+		}
+		
+		function letterBox(letter, x, y, width, height) { //this is an object which can be created from other points in the code, a letterbox is a part of the board, and contains a character within it, it stores information about itself and a way to draw itself
+			this.letter = letter; //letter is the correct letter that this box contains, meaning it is what needs to be guessed for this box in order for the guess to be correct
+			this.x = x; //x,y,width,height are all just for drawing the box, they are scaled with the size of the canvas where the object is created rather than within the object
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.activated = false; //activated and selected are two different states the box can be in, with activated meaning its letter is revealed, and selected meaning the box has been click on and is being guessed
+			this.selected = false; //boxes can only be selected during the gameState guess
+			this.isVowel = /[aeiou]/.test(letter); //saves weather the box is a vowel for later use
+			
+			this.draw = function() {
+				ctx.fillStyle = "#FFFFFF"; //filled in green if the tile has not been correctly guessed
+				if (!/[a-zA-Z]/.test(this.letter)){ //activates if the letter this box contains is not a letter (usually means a space
+					ctx.fillStyle = "#109c5f"; //if the box isnt a letter it is filled in dark green
+				}
+				else if (this.selected){
+					ctx.fillStyle = "#a7ebc0"; //and a lighter green if the tile is selected
+				}
+			
+				ctx.strokeStyle = "#000000"; //this makes the border black
+				ctx.lineWidth = Math.min(c1.width / 180, 10); //makes the border dynamic to the screen size
+				ctx.beginPath();
+				ctx.rect(this.x, this.y, this.width, this.height); //draws the rectangle and fills it with the correct color
+				ctx.fill();
+				ctx.stroke();
+				
+				if (this.activated){ //draw in the letter if the box has been correctly guessed
+					ctx.fillStyle = "#000000";
+					ctx.font = Math.min(this.width * 1.2, this.height * 0.8) + "px Arial"; //sets the font size based on the size of the box
+					if (this.letter.toLowerCase() == "w"){ //w boxes didnt fit properly, this looks weird but at least works
+						ctx.font = Math.min(this.width * 1, this.height * 0.7) + "px Arial";
+					}
+					ctx.textAlign = "center"; //centers the text in the box
+					ctx.fillText(this.letter.toUpperCase(), this.x + this.width / 2, this.y + this.height * 0.8); //the width is set to half bc the text draws in the center and the height is merely an approximation because there is no way I can find to automatically make it centered vertically
+				}
+			}
+			
+			this.checkCollide = function(testX, testY) {
+				if (testX > this.x && testX < this.x + this.width && testY > this.y && testY < this.y + this.height){
+					return true;
+				}
+				return false;
+			}
+		}
+		
+		function sound(src) { //taken from https://www.w3schools.com/graphics/game_sound.asp
+			//I do not understand this code, nor did I write it, it is used once, and is just a slightly modified version of the above code
+			this.sound = document.createElement("audio");
+			this.sound.src = src;
+			this.sound.setAttribute("preload", "auto");
+			this.sound.setAttribute("controls", "none");
+			this.sound.style.display = "none";
+			document.body.appendChild(this.sound);
+			this.play = function(){
+				this.sound.currentTime = 0;
+				this.sound.play();
+			}
+			this.stop = function(){
+				this.sound.pause();
+			}
+		}
+		
+		//Event listeners
+		document.addEventListener("DOMContentLoaded", function() { //on content load basically just gets any variables dependent on the canvas, generates any required objects, then starts frame looping
+			c1 = document.getElementById("canv1");
+			ctx = document.getElementById("canv1").getContext("2d");
+			
+			//set the size on load because it isnt set when the screen changes size
+			c1.width = window.innerWidth;
+			c1.height = window.innerHeight;
+			
+			//set an event listener
+			c1.addEventListener('mousedown', function(e) {
+				getCursorPosition(c1, e)
+			})
+			
+			// music = new sound("theme.mp3");
+			
+			//set up all the buttons
+			//by adding them to allButtons list the rest can be handled with just a few for loops because the button contains a variable dictating when it should be active, and drawn
+			allButtons.push(new button(c1.width / 6 - c1.width / 10, (c1.height / 5) * 4 + 20, c1.width / 5, c1.height / 12, "#FF0011", "wheel", "choice", "Spin")); //spin button
+			allButtons.push(new button((c1.width / 2) - c1.width / 6, (c1.height / 5) * 4 + 20, c1.width / 3, c1.height / 12, "#0033FF", "vowel", "choice", "Buy Vowel")); //buy vowel button
+			allButtons.push(new button((c1.width / 6) * 5 - c1.width / 10, (c1.height / 5) * 4 + 20, c1.width / 5, c1.height / 12, "#22FF00", "solve", "choice", "Solve")); //solve button
+			
+			
+			
+			allButtons.push(new button(c1.width / 2 - c1.width / 6, c1.height * 0.85, c1.width / 3, c1.height / 10, "#FFFFFF", "choice", "AIturn", "Begin Turn")); //end bil's turn button
+			
+			allButtons.push(new button(c1.width / 2 - c1.width / 6, (c1.height / 5) * 4 + 20, c1.width / 3, c1.height / 12, "#FFFFFF", "AIturn", "nextTurn", "Bil's Turn")); //next turn button
+			
+			allButtons.push(new button(c1.width / 2 - c1.width / 6, c1.height * 0.85, c1.width / 3, c1.height / 10, "#FFFFFF", "choice", "tutorial", "Start!")); //start button
+			 
+			allButtons.push(new button(c1.width / 2 - c1.width / 6, (c1.height / 5) * 4 + 20, c1.width / 3, c1.height / 12, "#FFFFFF", "tutorial", "nextRound", "Next round")); //next round button
+			
+			//generate the first board
+			genBoard();
+			
+			frame();
+		});
+		
+		document.addEventListener("keydown", function(key) { //runs on any key press
+			//alert(key.keyCode);
+			//On keydown the game has to check the gameState, and weather the key pressed is a possible value for one of the wordboxes, if its in the gamestate to solve and the selected wordbox has the same letter as the pressed one then it is set to active
+			//and the next box is automatically selected. If youre in a letter guessing phase and type a valid letter then it is registered as a guess
+			letter = String.fromCharCode(key.keyCode); //takes the key code JS gives and translates it to a string for easier definition of words
+			if (/[a-zA-Z]/.test(letter) && currSelectedBox != undefined && gameState == "solve"){ //makes sure the key pressed was a regular letter, checks if a box is selected, and if the player is currently trying to solve, then proceeds with checks
+				if (currSelectedBox.letter == letter.toLowerCase() || currSelectedBox.activated){ //If the pressed letter is the same as the correct letter for the selected box then it proceeds
+					currSelectedBox.activated = true; //sets the box that has been correctly guessed to active (which in the code is used to classify revealed boxes)
+					for (var i = 0; i < wordBoxes.length; i++){ //This code is all for making the next box in order automatically select on a correct guess
+						if (wordBoxes[i].selected){ //finds the current selected box then proceeds
+							wordBoxes[i].selected = false; //sets the current box to deselected
+							i++; //increments i as it is a variable currently defined to the correct value, and incrementing it means it will not continuously change the selected box, but rather skip over it
+							wordBoxes[i].selected = true; //sets the next box in order to selected
+							currSelectedBox = wordBoxes[i]; //sets the global variable of which box is selected to the correct box
+							while (!/[a-zA-Z]/.test(wordBoxes[i].letter)){ //this code makes the selection skip over the boxes which do not contain a letter
+								wordBoxes[i].selected = false; //this is a repeat of the above code except it runs until a suitable box which has a valid letter as a correct answer is found
+								if (i + 1 < wordBoxes.length){ //this checks if youre on the last worbox, and if u are it stops moving to the next valid box
+									i++;
+									wordBoxes[i].selected = true;
+									currSelectedBox = wordBoxes[i];
+								}
+								else {
+									break; //break out of the while loop if you are on the final box
+								}
+							}
+						}
+					}
+				}
+				else { //if the guess is incorrect (meaning the correct letter for the box, and the guessed letter do not match) this code runs
+					//if the guess is wrong
+					for (var i = 0; i < wordBoxes.length; i++){
+						wordBoxes[i].selected = false;
+					}
+					currSelectedBox = undefined;
+					gameState = "nextTurn"; //changes the gamestate, which will be seen at other points of the code then recognised and used
+				}
+			}
+			else if (/[a-zA-Z]/.test(letter) && !/[aeiouAEIOU]/.test(letter) && gameState == "consonant"){ //probably should have used case insensitive flag on the regex here but it wasn't working when I did that and I dont feel like troublshooting that
+				//guessing consonants
+				//function guess both reveals the guessed letter and returns the number of times it appears, meaning it can be used to add the appropriate amound of money to the players money amount
+				var appearences = guess(letter);
+				playerMoney += currMoneyVal * appearences;
+				if (appearences > 0){ //if the letter appeared then they player is allowed to do another action
+					gameState = "choice";
+				}
+				else { //otherwise their turn ends
+					nextTurnText = "Your letter did not appear.";
+					gameState = "nextTurn";
+				}
+				
+			}
+			else if (/[aeiouAEIOU]/.test(letter) && gameState == "vowel") {
+				//guessing vowels
+				//guessing vowels functions similarly to guessing consonants, except it just takes an amount off of your money based on the pre-defined variable
+				//I allowed negative money intentionally, as it could be confusing if the game wouldnt let you buy a vowel, and there was no good place on the screen for error text. Overall I thought it was just better to let u buy a vowel no matter what
+				if (guess(letter) >= 0){
+					playerMoney -= vowelCost;
+					gameState = "choice";
+				}
+				else { //if your guess is bad your turn is over
+					nextTurnText = "Your vowel did not appear.";
+					gameState = "nextTurn";
+				}
+			}
+			else if (key.keyCode == 27 && gameState == "vowel" || key.keyCode == 27 && gameState == "wheel" && wheelSpeed == 100) { //option to go back, only before u spin
+				gameState = "choice";
+			}
+		});
+		
+		function getCursorPosition(canvas, event) { //this is called by an event listener whenever you click
+			//This function handles everything that needs to know when it is clicked
+			//Because it is mostly objects that require detecting being clicked it can use the functions defined in the object to do so
+			//but in the case of the wheel some math is used to detect weather the click is on the wheel
+			const rect = canvas.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			
+			if (gameState == "solve"){ //if you are attempting to solve and click, then it checks to see which box you clicked, or if you clicked any at all. If you did click one then it sets a variable in the wordBox, and also a global variable for easy access
+				for (var i = 0; i < wordBoxes.length; i++){ //select box on click
+					wordBoxes[i].selected = wordBoxes[i].checkCollide(x,y);
+					if (wordBoxes[i].checkCollide(x,y)){ //checkCollide returns a bool dependent on weather it was detirmined to be clicked or not
+						currSelectedBox = wordBoxes[i];
+					}
+				}
+			}
+			
+			if (gameState == "wheel" && (Math.sqrt(Math.pow(x - c1.width / 2,2) + Math.pow(y - c1.height / 2,2)) < (Math.min(c1.width / 2, c1.height / 2) * 0.8)) && wheelSpeed == 100){ //this is a lot to just say if the wheel is active, the click is on the wheel, and the wheel is stopped
+				//makes the wheel start spinning if clicked
+				isSpinning = true;
+				wheelSpeed = 0.05 + (randInt(0,100) / 100) * 0.09;
+			}
+			
+			if (gameState == "tutorial" && roundOn == 1 && allButtons[0].checkCollide){ //this happens when you click because the tab has to be in focus to play audio
+				// music.play();
+			}
+			
+			for (var i = 0; i < allButtons.length; i++){ //similar to word boxes checks if any of the buttons are clicked on, then weather the gamestate is correct for them to be activated
+				if (allButtons[i].checkCollide(x,y) && allButtons[i].activeGamestate == gameState){
+					gameState = allButtons[i].gameState; //if all the checks pass, then the gameState is set to the one dictated in the button object
+				}
+			}
+		}
+		
+		window.addEventListener("resize", function(){
+			// Disabled because it breaks most of the graphics of the game
+			//c1.width = window.innerWidth;
+			//c1.height = window.innerHeight;
+		});
+		
+		//Misc functions/drawing
+		function randInt(min, max) {
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
+		
+		function genBoard(){
+			//set up the board
+			var select = randInt(0,phrase.length);
+			currPhrase = phrase[select]; //add something to remove phrases from list
+			currPhrase = currPhrase.split("");
+			
+			phrase.splice(select, 1);
+			
+			for (var r = 1; r <= 3; r++){ //iterate through three rows of 12, and generate the wordboxes using the chosen puzzle, and adapting to the size of the canvas
+				for (var i = 0; i < 12; i++){
+					wordBoxes.push(new letterBox(currPhrase[i + (12 * (r - 1))], (c1.width / 16) * (i + 2), (c1.height / 5) * (r), c1.width / 16, c1.height / 5));
+				}
+			}
+		}
+		
+		function AIturn() { //AI doesnt behave entirely realistically but it works
+			//Bil's Brain
+			var hasBoughtVowel = false;
+			var revealedTiles = 0;
+			var allLetterTiles = 0;
+			var revealedVowels = 0;
+			var allVowels = 0;
+			var toGuess;
+			var newAction = true; //newAction dictates weather Bil should make another action
+			var circleValues = [250,350,100,150,550,200]; //should really be refrenced from the circle function, but its fine
+			//bankrupt and 1000 are missing from this list intentionally, because it would drastically complicate the AI, as well as making it very inconsistant
+			
+			var firstAction = 1; //firstAction tracks the number of actions Bil has taken, as he can only attempt certian actions on his firs turn
+			while (newAction){
+				firstAction --;
+				for (var i = 0; i < wordBoxes.length; i++){ //this iterates through all the wordboxes to gather data for Bil to make decisions
+					if(/[a-zA-Z]/.test(wordBoxes[i].letter)) {
+						allLetterTiles++; //if it passes the test of being a letter
+						if (wordBoxes[i].activated) {
+							revealedTiles++; //if it is a letter and active
+							if (wordBoxes[i].isVowel){
+								revealedVowels++; //if it is a letter, active, and a vowel
+							}
+						}
+						if (wordBoxes[i].isVowel){
+							allVowels++; //if it is a vowel and a letter
+						}
+					}
+				}
+				
+				//attempt to solve, only on the first action
+				if (randInt(0,100) > 120 - (revealedTiles / allLetterTiles) * 100 && firstAction >= 0 && !firstAIturnEver) { //becomes more likely the more tiles are revealed, to a max of 80%
+					if (randInt(0,100) > (revealedTiles / allLetterTiles) * 100){ //if a solve attempt is made then this second check must be made to see if it succeeds
+						AImoney += 2000; //adds money for the solve
+						for (var i = 0; i < wordBoxes.length; i++){ //activates all tiles to simulate a correct solve
+							wordBoxes[i].activated = true;
+						}
+					}
+					newAction = false; //no new action can be taken regardless of success
+				}
+				else if (randInt(0,100) > ((revealedTiles - revealedVowels) / (allLetterTiles - allVowels) * 100) || firstAIturnEver){ //sim wheel spin, is more likely the less consonants are revealedTiles
+					consonants = "qwrtypsdfghjklzxcvbnm".split(""); //list of all possible consonant guesses
+					moneyVal = circleValues[randInt(0,circleValues.length)]; //simulates a wheel spin
+					
+					if (randInt(0,3) == 0 || firstAIturnEver){ //1/3 chance to make a random guess or a correct one, however first ever guess is always right
+						firstAIturnEver = false;
+						for (var q = 0; q < 20; q++){//runs a set amount of times to avoid an unlikely (but possible) endless loop
+							doGuess = false; //in the garunteed correct version the guess is false unless proven true
+							toGuess = consonants[randInt(0,consonants.length)]; //gets a random consonant to guess
+							for (var i = 0; i < wordBoxes.length; i++){
+								if (wordBoxes[i].letter == toGuess && !wordBoxes[i].activated){
+									doGuess = true; //if there are any valid wordboxes for this guess it is considered valid
+									break;
+								}
+							}
+							if (doGuess){ //make the guess if all checks are passed
+								var appearences = guess(toGuess.toUpperCase());
+								AImoney += moneyVal * appearences; //adds money to the AIs money amound just as it would for a normal player
+								if (appearences <= 0) {newAction = false}
+								break;
+							}
+						}
+					}
+					else {
+						for (var q = 0; q < 20; q++){//runs a set amount of times to avoid an unlikely (but possible) endless loop, and also simulate human error to an extent
+							doGuess = true; //the guess is assumed to be valid unless otherwise proven
+							toGuess = consonants[randInt(0,consonants.length)]; //gets a random consonant to guess
+							for (var i = 0; i < wordBoxes.length; i++){ //for loop basically tries to make sure the letter has yet to be guessed
+								if (wordBoxes[i].letter == toGuess && wordBoxes[i].activated){
+									doGuess = false; //if the consonant has already been revealed, then the guess is deemed invalid
+								}
+							}
+							if (doGuess){ //make the guess if all checks are passed
+								var appearences = guess(toGuess.toUpperCase());
+								AImoney += moneyVal * appearences; //adds money to the AIs money amound just as it would for a normal player
+								if (appearences <= 0) {newAction = false}
+								break;
+							}
+						}
+					}
+				}
+				else if (randInt(0,100) < ((revealedTiles - revealedVowels) / (allLetterTiles - allVowels) * 100) && AImoney > 300 && !hasBoughtVowel){ //sim vowel purchase, more likely the more consonats have been revealed
+					//follows almost the exact same procedure as the consonant guess except it can only do this once per turn, and it loses money on a guess, not gains it
+					vowels = "aeiou".split("");
+					
+					for (var q = 0; q < vowels.length; q++){//runs a set amount of times to avoid an unlikely endless loop
+						doGuess = true;
+						toGuess = vowels[q];
+						for (var i = 0; i < wordBoxes.length; i++){ //for loop basically tries to make sure the letter has yet to be guessed
+							if (wordBoxes[i].letter == toGuess && wordBoxes[i].activated){
+								doGuess = false;
+							}
+						}
+						if (doGuess){ //make the guess!
+							var appearences = guess(toGuess.toUpperCase());
+							AImoney -= vowelCost;
+							if (appearences <= 0) {newAction = false}
+							hasBoughtVowel = true;
+							break;
+						}
+					}
+				}
+				else{
+					//Automatically guess a random consonant if no other action is chosen
+					consonants = "qwrtypsdfghjklzxcvbnm".split("");
+					moneyVal = circleValues[randInt(0,circleValues.length)];
+					var appearences = guess(consonants[randInt(0,consonants.length)]);
+					AImoney += moneyVal * appearences;
+					if (appearences <= 0) {newAction = false}
+				}
+			}
+		}
+		
+		function drawMoneyAmounts() { //similar to every other drawing function but it draws boxes around the text
+			//you
+			ctx.fillStyle = "rgb(250,250,24)";
+			ctx.strokeStyle = "#000000";
+			ctx.lineWidth = 4;
+			ctx.beginPath();
+			ctx.rect((c1.width / 15) * (1), 5, c1.width / 3, c1.height / 6);
+			ctx.fill();
+			ctx.stroke();
+			//text
+			ctx.fillStyle = "#000000";
+			ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText("You $" + playerMoney, (c1.width / 16) * (1) + c1.width / 6, 5 + c1.width / 18);
+			
+			//AI
+			ctx.fillStyle = "rgb(4,250,84)";
+			ctx.strokeStyle = "#000000";
+			ctx.lineWidth = 4;
+			ctx.beginPath();
+			ctx.rect((c1.width / 15) * (9), 5, c1.width / 3, c1.height / 6);
+			ctx.fill();
+			ctx.stroke();
+			//text
+			ctx.fillStyle = "#000000";
+			ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+			ctx.textAlign = "center";
+			ctx.fillText("Bil $" + AImoney, (c1.width / 16) * (9) + c1.width / 5, 5 + c1.width / 18);
+		}
+		
+		function drawTutorial() { //the tutorial gameState is used for the opening screen, but also the screens between each round, it is done differently based on the round, and makes the gameState results if it is the end of the last round
+			ctx.fillStyle = "#f2fff5";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			if (roundOn == 1){
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+				ctx.textAlign = "center";
+				ctx.fillText("Welcome to wheel of fortune", c1.width / 2, c1.height / 12);
+				ctx.fillText("Today's theme is \"Overwatch Voice Lines\"", c1.width / 2, (c1.height / 12) * 3);
+				ctx.fillText("We will be playing 3 rounds", c1.width / 2, (c1.height / 12) * 5);
+				ctx.fillText("Click on the button below to start", c1.width / 2, (c1.height / 12) * 7);
+			}
+			if (roundOn == 2 || roundOn == 3){
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+				ctx.textAlign = "center";
+				drawMoneyAmounts();
+				ctx.fillText("End of round " + (roundOn - 1), c1.width / 2, (c1.height / 12) * 5);
+			}
+			if (roundOn == 4){
+				gameState = "results";
+			}
+		}
+		
+		function drawResults() { //results screen is drawn differently dependent on weather won or lost, otherwise the same as most other draw functions
+			ctx.fillStyle = "#f2fff5";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			if (playerMoney == AImoney){
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+				ctx.textAlign = "center";
+				drawMoneyAmounts();
+				ctx.fillText("Draw", c1.width / 2, (c1.height / 12) * 5);
+			}
+			else if (playerMoney > AImoney){
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+				ctx.textAlign = "center";
+				drawMoneyAmounts();
+				ctx.fillText("Congrats you won!", c1.width / 2, (c1.height / 12) * 5);
+			}
+			else {
+				ctx.fillStyle = "#000000";
+				ctx.font = Math.min(c1.width / 16 * 0.8, c1.height / 5 * 0.5) + "px Arial"; 
+				ctx.textAlign = "center";
+				drawMoneyAmounts();
+				ctx.fillText("You lose", c1.width / 2, (c1.height / 12) * 5);
+				ctx.fillText("Better luck next time", c1.width / 2, (c1.height / 12) * 7);
+			}
+			drawMoneyAmounts();
+		}
+		
+		function drawConsonant() {
+			//text
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText("Select a consonant on your keyboard", c1.width / 2, c1.height / 12);
+			ctx.fillText("that you think appears in the phrase.", c1.width / 2, c1.height / 6);
+		}
+		
+		function drawSolve() {
+			//text
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText("Click on a box then type", c1.width / 2, c1.height / 12);
+			ctx.fillText("the corresponding letter", c1.width / 2, c1.height / 6);
+		}
+		
+		function drawVowel() {
+			//text
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText("Type a vowel on your keyboard", c1.width / 2, c1.height / 12);
+			ctx.fillText("to reveal it on the board", c1.width / 2, c1.height / 6);
+		}
+		
+		function drawNextTurn() {
+			//text
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText(nextTurnText, c1.width / 2, c1.height / 12);
+			ctx.fillText("On to the next turn!", c1.width / 2, c1.height / 6);
+		}
+		
+		function drawNextRound() {
+			//text
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText(nextRoundText, c1.width / 2, c1.height / 12);
+			ctx.fillText("On to the next turn!", c1.width / 2, c1.height / 6);
+		}
+		
+		function drawWheel(offset){
+			ctx.fillStyle = "#99ff66";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			//This single function has cost me hours of sleep and my sanity, it better have been worth it
+			var selectedVal; 
+			var circleData = [5,5,5,2,5,5,5,1]; //gives the circle drawer info on what proportions each section should have
+			var circleValues = [250,350,100,"bankrupt",400,550,200,1000]; //dictates the values for each of the circle slices, used else
+			var radius = Math.min(c1.width / 2, c1.height / 2) * 0.7; //evaluates a radius based on the size of the screen
+			var angleOn = offset; //angleOn is what decides where a slice should start to be drawn, so by setting it to offset the first slice is started at the offset
+			var total = 0; //used to calculate size of each slice
+			var colorList =["rgb(255,0,0)","rgb(255,255,0)","rgb(0,255,0)","rgb(0,0,0)","rgb(0,0,255)","rgb(0,255,255)","rgb(255,0,100)","rgb(255,255,255)"]; //chooses the colors for each slice
+			
+			for (var i = 0; i < circleData.length; i++){
+				total += circleData[i]; //gets the total size of the circle, so each slice can be drawn at the right size based on what fraction of this number it is
+			}
+			
+			for (var i = 0; i < circleData.length; i++){ //runs once per slice
+					//defines things for checking the section which is currently "active" or "selected"
+					var selectAt = 1.5 * Math.PI; //this is where the little nub thing from the show would be (the one that shows which section is picked) seen better here: https://imgur.com/a/U0XA4Ni
+					var low = (angleOn*Math.PI) % (2*Math.PI); //the start angle of the slice in radians
+					var high = (((circleData[i] / total * 2)*Math.PI) + (angleOn*Math.PI)) % (2*Math.PI); //the end angle of the slice in radians
+			
+					ctx.lineWidth = 10;
+					ctx.fillStyle = colorList[i]; //gets the color for the slice from the provided list
+					
+					if (low <= selectAt && high > selectAt) { //if the nub is between the start and the end it is selected
+						var selectedVal = circleValues[i];
+					}
+					else if (low <= selectAt && high < low){ //if the nub is after the start, and the end loops around to be at an angle less than the start then it is considered selected
+						var selectedVal = circleValues[i];
+					}
+					
+					//This part makes a triangle from the center of circle, to the start of the arc, to the end of the arc, because filling in a circle with ctx.fill isnt that easy
+					//It only fills in a very small part, so this triangle fills in the gaps, drawn slightly larger than normal to avoid any pixel wide gaps
+					ctx.beginPath();
+					ctx.moveTo(c1.width / 2, c1.height / 2); //goes to center of circle
+					ctx.lineTo(c1.width / 2 + Math.cos(angleOn*Math.PI) * radius * 1.01, c1.height / 2 + Math.sin(angleOn*Math.PI) * radius * 1.01); //goes tot the start of the arc, uses cos and sin to get x and y
+					ctx.lineTo(c1.width / 2 + Math.cos(((circleData[i]) / total * 2)*Math.PI + angleOn*Math.PI) * radius * 1.01, c1.height / 2 + Math.sin(((circleData[i]) / total * 2)*Math.PI + angleOn*Math.PI) * radius * 1.01); //goes to the end of the arc using the same method
+					ctx.closePath();
+					ctx.fill(); //fills it to form a triangle
+					
+					//draws the outside line of the circle + fills in the area between the start point and end point of the arc
+					ctx.beginPath();
+					ctx.arc(c1.width / 2, c1.height / 2, radius, angleOn*Math.PI, ((circleData[i]) / total * 2)*Math.PI + angleOn*Math.PI); //uses the variable that tracks the position that the arc should start on (angleOn) then adds the proportion of the circle it should cover
+					ctx.fill();
+					ctx.stroke();
+					
+					//draws the inner lines that seperate slices
+					ctx.lineWidth = 3;
+					ctx.beginPath();
+					ctx.moveTo(c1.width / 2, c1.height / 2); //goes to center of circle
+					ctx.lineTo(c1.width / 2 + Math.cos(angleOn*Math.PI) * radius, c1.height / 2 + Math.sin(angleOn*Math.PI) * radius); //draws it to the start point of the current slice
+					ctx.stroke();
+
+					angleOn += (circleData[i] / total) * 2;	//adds to angleOn to track progress so the next slice is drawn property
+				}
+			
+			//text
+			//this just draws the money amount to the top of the screen
+			ctx.fillStyle = "#FFFFFF";
+			ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial"; //sets the font size based on the screen size
+			ctx.textAlign = "center"; //align center so it is even on both sides and visually pleasing
+			ctx.fillText(selectedVal, c1.width / 2, c1.height / 12); //draws the actual text, origin is at 50% of the x because it is aligned center, y is just set to a value near the top of the screen that is based on the canvas size
+			
+			//instructions
+			if (wheelSpeed == 100){
+				ctx.fillStyle = "#FFFFFF";
+				ctx.font = Math.min(c1.width * 0.1, c1.height * 0.07) + "px Arial";
+				ctx.textAlign = "center";
+				ctx.fillText("Click the wheel ", c1.width / 2, c1.height / 3);
+				ctx.fillText("to start ", c1.width / 2, c1.height / 2.5);
+			}
+			
+			return selectedVal; //returns the value of the selcted slice
+			//Im sorry for you having to read that Mr.Q, happy marking
+		}
+		
+		function guess(letter){ //guess is a function used to reveal all instances of a letter, and return the number of revealed instances
+			toReturn = 0;
+			for (var i = 0; i < wordBoxes.length; i++){
+				if (wordBoxes[i].letter == letter.toLowerCase()){ //iterates through all the wordBoxes to find one with the letter to be checked for
+					if (!wordBoxes[i].activated) { //if it hasnt already been activated the wordBox is activated and a counter is incremented to later be returned
+						toReturn++;
+						wordBoxes[i].activated = true;
+					}
+				}
+			}
+			return toReturn;
+		}
+		
+		function frame() { //frame is the function that is called for every frame that is drawn to the screen, it has a few important functions. 
+			//The first function of the the frame is to detirmine weather the current puzzle is over, it does this by seeing if every single box that contains a letter has been guessed, if they have all been guessed then it sets a variable
+			//That variable is then used to detirmine when to reset the board and change the gameState
+			var solved = false;
+			requestAnimationFrame(frame);
+			
+			//logic
+			if (gameState != "solve"){
+				currSelectedBox = undefined;
+			}
+			
+			//clear
+			ctx.fillStyle = "#999999";
+			ctx.fillRect(0, 0, c1.width, c1.height);
+			
+			//check if the puzzle is solved by seeing if all wordBoxes with a letter have been activated (revealed)
+			solved = true;
+			for (var i = 0; i < wordBoxes.length; i++){
+				if (!wordBoxes[i].activated && /[a-zA-Z]/.test(wordBoxes[i].letter)){
+					solved = false;
+				}
+			}
+			
+			if (gameState == "tutorial" && solved){ //if the game has been reset, and the puzzle is solved then the puzzle is regenerated
+				wordBoxes = [];
+				genBoard();
+			}
+			
+			if (gameState == "nextRound" || gameState == "tutorial"){ ///makes sure things dont reset
+				solved = false;
+			}
+			
+			if (solved && gameState == "solve") { //if the puzzle is marked as solve, and the player is in the solving state, then it means the player has solved the puzzle
+				//sets the next round message, adds the money for solving, then starts the next round
+				nextRoundText = "Congrats on solving +$2000";
+				playerMoney += 2000;
+				gameState = "nextRound";
+				roundOn++;
+			}
+			else if (solved){ //Otherwise it means bil solved the puzzle
+				//Changes the text for the next round message, then starts the next round, as bil is awarded his money in the AIturn function
+				nextRoundText = "Puzzle finished";
+				gameState = "nextRound";
+				roundOn++;
+			}
+			
+			//drawing
+			for (var i = 0; i < wordBoxes.length; i++){
+				wordBoxes[i].draw();
+			}
+			
+			if (gameState == "tutorial"){ //really could have made most of this a case switch, but idc
+				drawTutorial();
+			}
+			
+			if (gameState == "results") {
+				drawResults();
+			}
+			
+			if (gameState == "AIturn" && !AIhadTurn){
+				AIturn();
+				AIhadTurn = true;
+			}
+			if (gameState == "AIturn"){
+				drawMoneyAmounts();
+			}
+			
+			if (gameState == "consonant"){
+				drawConsonant();
+			}
+			
+			if (gameState == "solve"){
+				drawSolve();
+			}
+			
+			if (gameState == "choice"){
+				drawMoneyAmounts();
+				AIhadTurn = false;
+			}
+			
+			if (gameState == "vowel"){
+				drawVowel();
+			}
+			
+			if (gameState == "nextTurn"){
+				drawNextTurn();
+			}
+			
+			if (gameState == "nextRound"){
+				//drawNextRound();
+				drawMoneyAmounts();
+			}
+			
+			 //wheel spin
+			if (gameState == "wheel"){
+				if (wheelSpeed != 100){
+					wheelSpeed -= 0.001;
+				}
+				if (wheelSpeed > 0 && wheelSpeed != 100){
+					wheelRotation += wheelSpeed * Math.PI;
+				}
+				else {
+					currMoneyVal = drawWheel(wheelRotation);
+					if (currMoneyVal == "bankrupt" && wheelSpeed <= 0){
+						playerMoney = 0;
+						wheelSpeed = 100;
+						nextTurnText = "Bankrupt!";
+						gameState = "nextTurn";
+					}
+					
+				}
+				if (wheelSpeed < -0.15){
+					wheelSpeed = 100;
+					gameState = "consonant";
+				}
+				drawWheel(wheelRotation);
+			}
+			
+			//draw any needed buttons
+			for (var i = 0; i < allButtons.length; i++){
+				if (allButtons[i].activeGamestate == gameState){
+					allButtons[i].draw();
+				}
+			}
+		}
+		
+		</script>
+	</head>
+	
+	<body>
+		<canvas id="canv1" width="1900" height="930" style="border:1px solid #000;"></canvas>
+	</body>
+	
+</html>

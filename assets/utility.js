@@ -12,3 +12,15 @@ export const numberToMonth = {
   11: "November",
   12: "December"
 };
+
+export const formatDateBlog = (dateArray) => {
+  const [year, month, day] = dateArray;
+  
+  const date = new Date(year, month, day);
+  
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};

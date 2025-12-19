@@ -1,4 +1,3 @@
-<!-- Please remove this file from your project -->
 <template>
   <div
     style="background-color: #1d1d1f; border-radius: 25px; height: 100%"
@@ -32,7 +31,7 @@
           <span v-if="data.startDate">
             {{ numberToMonth[data.startDate[1]] }} {{ data.startDate[0] }} -
             <span v-if="!data.ongoing && data.endDate">{{ numberToMonth[data.endDate[1]] }} {{ data.endDate[0] }}</span>
-            <span v-else>present</span>
+            <span v-else>Present</span>
           </span>
           <span v-else-if="data.date">
             {{ numberToMonth[data.date[1]] }} {{ data.date[0] }}

@@ -1,6 +1,6 @@
 import skills from './skills.js'
 
-//dates are expressed as [yyyy,mm]
+//dates are expressed as [yyyy,mm,dd]
 
 export default {
   retiremint: {
@@ -93,6 +93,40 @@ export default {
     The app was designed and developed by me and one other student. It was designed in figma, then developed using React Native and Nativebase.IO. The app uses Spoonacular API for all of its food and recipe data. The app was built using Expo, and published to the Apple App Store and Google Play Store.`,
     images: ["/pantryPilot/playPage.png"],
   },
+  aiAudio: {
+    name: "AI Audio System",
+    startDate: [2024, 2],
+    endDate: [2024, 2],
+    skills: [skills.ai, skills.python],
+    shortDescription:
+      "Implemented a siamese neural network in TensorFlow trained on custom data to recognize if a subject is wearing headphones or not, and automatically change the audio output device accordingly.",
+    longDescription:
+      "Based on a U of T paper (Siamese Neural Networks for One-shot Image Recognition), this project demonstrates the full machine learning pipeline from data capture through to a use-case. Model was self-trained on custom data, and achieved an accuracy of over 95% percent in testing, even when variables such as clothing, lighting and position were varied. The video below explains and demos the project further.",
+    video: "https://www.youtube.com/embed/gDNXZaTKLyY?si=8JQtW9TeqsPfeJaP",
+  },
+  jsOneliners: {
+    name: "JS One-Line Coding Problems",
+    link: "https://natecode1.github.io/jsoneliners.html",
+    startDate: [2025, 10],
+    endDate: [2025, 12],
+    skills: [skills.javascript],
+    shortDescription:
+      "A game that poses coding problems, and challenges you to solve them with two caveats: your solution can only be one line (no semicolons), all code must be javascript.",
+    longDescription: `I've always loved solving practice coding problems in a single line, by making use of JavaScript quirks. I decided to share this love with the world through this project.
+    It has a library of problems, test-cases, code checking, syntax highlighting, and an in-built library of knowledge to help. The problems start quite simple, and ramp up to become quite difficult. The built-in library of knowledge should contain all that you need to know, as long as you have some existing coding knowledge. If you like JavaScript or code golf, I'd give this a try.`,
+    images: ["/jsol/img1.png", "/jsol/img2.png", "/jsol/img3.png"],
+  },
+  xkcdbg: {
+    name: "XKCD Desktop Background Changer",
+    link: "https://natecode1.github.io/xkcd",
+    startDate: [2024, 2],
+    skills: [skills.python],
+    shortDescription:
+      "A tool to automatically update the desktop background of a windows device to be the latest xkcd comic.",
+    longDescription: `I am a big fan of Randall Munroe's comic: xkcd. New comics release every few days, and I would often miss them. So I decided to create a program that would always make my desktop background the latest one. This way I never miss a comic, and my desktop background never gets stale.
+    Currently, the program only works on windows. Below is the GUI and a sample output.`,
+    images: ["/xkcd/img1.png", "/xkcd/img2.png"],
+  },
   campusCanvas: {
     name: "Interactive Campus Map",
     startDate: [2023, 9],
@@ -124,18 +158,9 @@ export default {
       "Used NIOS II assembly to create a program that uses the VGA buffer and JTAG UART to emulate the game of Snake. The game is playable on web through a simulator, or directly on FPGA hardware. It is built for the DE1-SoC board, and is fully tested directly on hardware. The video below includes instructions to try it out on simulator (in the video description), and a demo running on native hardware.",
     video: "https://www.youtube.com/embed/gux2E0M5w7E?si=60nXZkPNQ9XdbCjj",
   },
-  aiAudio: {
-    name: "AI Audio System",
-    startDate: [2024, 2],
-    endDate: [2024, 2],
-    skills: [skills.ai, skills.python],
-    shortDescription:
-      "Implemented a siamese neural network in TensorFlow trained on custom data to recognize if a subject is wearing headphones or not, and automatically change the audio output device accordingly.",
-    longDescription:
-      "Based on a U of T paper (Siamese Neural Networks for One-shot Image Recognition), this project demonstrates the full machine learning pipeline from data capture through to a use-case. Model was self-trained on custom data, and achieved an accuracy of over 95% percent in testing, even when variables such as clothing, lighting and position were varied. The video below explains and demos the project further.",
-    video: "https://www.youtube.com/embed/gDNXZaTKLyY?si=8JQtW9TeqsPfeJaP",
-  },
   nathanFM: {
+    // HIDDEN for being bad
+    hideAsProject: true,
     name: "RFID Music Player",
     startDate: [2023, 6],
     endDate: [2023, 8],
@@ -185,7 +210,7 @@ export default {
     ongoing: true,
     skills: [skills.cs, skills.unity],
     shortDescription:
-      "My itch.io page. Currently contains three solo-developed games, two of which are from game jams. All games were made using Unity 2D. I still work on game development from time to time, and will update the itch page as projects are finished.",
+      "My itch.io page. Contains all the games I've developed (and decided to publish), many of these are from game jams.",
     link: "https://shrek5x.itch.io/",
   },
   blenderJune: {
