@@ -13,11 +13,11 @@
     <h2>Portal But 2D</h2>
     <p>This was my final project in Grade 10, a 2D puzzle game. It is extremely difficult, the controls are unintuitive, and it has some bugs. Despite all this, I still look upon it fondly, and I still think that beating it is a rewarding (if needlessly difficult) challenge. If you can't see the whole screen at once, you'll just have to zoom your browser (shortcut is usually ctrl minus). It isn't really possible to play this without a mouse, because it makes use of middle mouse button (clicking on the scroll wheel) to place one of the portals.</p>
     <p>I remember spending a lot of time working on this, it was the first time I had a computer programming class in school, and is probably a big part of why I still love JavaScript so much. That being said, the code is awful. It's a miracle that opening any of the files doesn't instantly crash your browser. It's nearly unreadable, but we all must start somewhere.</p>
-    <p><a href="/blog/blog-test/portal" target="blank">Play in new tab (highly recommended)</a></p>
-    <p style="font-size: 0.85rem;">Dev mode password is 879.</p>
-    <div style="position: relative; height: 80vh;">
+    <p style="font-size: 0.85rem;">Pro Tip: Dev mode password is 879.</p>
+    <a href="https://natecode1.github.io/projects/portal" target="blank"><v-btn class="mt-4" color="white" size="large">Play in new tab</v-btn></a>
+    <!-- <div style="position: relative; height: 80vh;">
       <iframe style="height: 80vh; border-radius: 15px; position: absolute; width: 2000px; max-width: 95vw; left: 50%; transform: translateX(-50%); border: 15px solid #222;" class="mt-2" src="/blog/blog-test/portal" title="portal 2d"></iframe>
-    </div>
+    </div> -->
 
     <h2>Wheel of Fortune</h2>
     <p>This is a basic recreation of hit game show Wheel of Fortune. All the phrases to guess are voice lines from the game Overwatch because my comp sci teacher at the time was a fan of the game. In the game you play against a CPU player named "Bil".</p>
