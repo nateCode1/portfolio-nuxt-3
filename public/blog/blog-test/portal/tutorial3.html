@@ -618,14 +618,14 @@
 				if (plX == drX && plY == drY) {//Check for moving to next room
 					if (String(dtx.getImageData(drX, drY, 1, 1).data) == "50,255,50,255") { //check exit portal existing
 						//enter portal
-						window.location.href = "challenge1.html";
+						window.location.href = "./challenge1.html";
 					}
 				}
 				
 				if (plX == sdrX && plY == sdrY) {//Check for moving to secret room
 					if (String(dtx.getImageData(sdrX, sdrY, 1, 1).data) == "255,100,50,255") { //check secret portal existing
 						//enter portal
-						window.location.href = "secret1.html";
+						window.location.href = "./secret1.html";
 					}
 				}
 			}
