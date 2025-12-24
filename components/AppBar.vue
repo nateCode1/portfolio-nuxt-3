@@ -3,7 +3,7 @@
   <v-row 
     class="w-100 pa-0 ma-0 justify-space-between"
     ref="appBar"
-    style="background-color: rgba(0,0,0,0.3); position: fixed; z-index: 1000; backdrop-filter: blur(20px); border-bottom: rgba(255,255,255,0.1) 3px solid;"
+    style="background-color: rgba(0,0,0,0.4); position: fixed; z-index: 1000; backdrop-filter: blur(25px); border-bottom: rgba(255,255,255,0.1) 2px solid;"
   >
     <v-col class="pa-0" cols="12">
       <div
@@ -16,13 +16,13 @@
     </v-col>
     <v-col cols="12" sm="4" class="pa-1">
       <router-link to="/" class="d-flex align-center h-100" style="gap: 10px; text-decoration: none;">
-        <img src="/logo_hirez.svg" style="aspect-ratio: 1/1; max-height: 60px;"/>
-        <p style="font-size: 1.8em; font-weight: 600; color: white;">N<sup>3</sup>H Dev</p>
+        <img src="/logo_hirez.svg" style="aspect-ratio: 1/1; max-height: 50px;"/>
+        <p class="underline-hover" style="font-size: 1.8em; font-weight: 600; color: white;">N<sup>3</sup>H Dev</p>
       </router-link>
     </v-col>
     <v-col cols="12" sm="8" md="5" lg="4" class="d-flex align-center">
       <v-row>
-        <v-col cols="12" sm="5" class="contact">
+        <v-col cols="12" sm="5" class="contact py-1">
           <v-icon large>mdi-linkedin</v-icon>
           <p>
             <a target="blank" href="https://www.linkedin.com/in/nathan-harrison-dev/"
@@ -30,7 +30,7 @@
             >
           </p>
         </v-col>
-        <v-col cols="12" sm="7" class="contact">
+        <v-col cols="12" sm="7" class="contact py-1">
           <v-icon large>mdi-email-outline</v-icon>
           <p>
             <a href="mailto:nathanh.vision@gmail.com"
@@ -83,5 +83,13 @@ export default {
   a {
     color: #83d4ef !important;
   }
+}
+
+.underline-hover {
+  text-decoration: none;
+}
+
+.underline-hover:hover {
+  text-decoration: underline;
 }
 </style>

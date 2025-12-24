@@ -6,4 +6,9 @@ export default {
     date: [2025, 12, 19],
     link: "/blog/blog-test",
   },
+  jsol: {
+    title: "JS Oneliners Released",
+    date: [2025, 12, 22],
+    link: "/blog/jsol-release",
+  },
 };

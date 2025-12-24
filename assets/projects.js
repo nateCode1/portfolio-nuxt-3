@@ -113,7 +113,7 @@ export default {
     shortDescription:
       "A game that poses coding problems, and challenges you to solve them with two caveats: your solution can only be one line (no semicolons), all code must be javascript.",
     longDescription: `I've always loved solving practice coding problems in a single line, by making use of JavaScript quirks. I decided to share this love with the world through this project.
-    It has a library of problems, test-cases, code checking, syntax highlighting, and an in-built library of knowledge to help. The problems start quite simple, and ramp up to become quite difficult. The built-in library of knowledge should contain all that you need to know, as long as you have some existing coding knowledge. If you like JavaScript or code golf, I'd give this a try.`,
+    It has a test-cases, library of problems, code checking, syntax highlighting, and an in-built library of knowledge to help. The problems start quite simple, and ramp up to become quite difficult. The built-in library of knowledge should contain all that you need to know, as long as you have some existing coding knowledge. If you like JavaScript or code golf, I'd give this a try.`,
     images: ["/jsol/img1.png", "/jsol/img2.png", "/jsol/img3.png"],
   },
   xkcdbg: {

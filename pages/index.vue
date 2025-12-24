@@ -58,14 +58,16 @@
           <v-btn
             v-for="btn in tabs"
             :key="btn.title"
-            class="tab mx-3 px-5 rounded-xl"
-            style="transition: all 0.2s; height: 45px"
+            class="rounded-xl mx-2 py-4"
+            size="x-large"
+            style="transition: all 0.2s; background-color: rgba(255, 195, 0, 0.05); width: 160px; font-size: 1.4rem; font-weight: bold; height: auto;"
             :style="{
               backgroundColor:
                 tab == btn.value
                   ? 'rgba(255, 195, 0, 0.4)'
                   : 'rgba(255, 195, 0, 0.1)',
               transform: tab == btn.value ? 'scale(1.1)' : '',
+              border: tab == btn.value ? '3px solid rgba(255,255,255,0.4)' : ''
             }"
             @click="tab = btn.value"
             >{{ btn.title }}
@@ -88,7 +90,7 @@
             <div style="max-width: 1000px;" class="mx-auto">
               <BlogCard 
                 class="mt-2"
-                v-for="(post, i) in Object.values(blogPosts)"
+                v-for="(post, i) in Object.values(blogPosts).sort(sortDateFn)"
                 :key="post.title"
                 :data="post"
                 :color="colors[i % colors.length]"
@@ -299,6 +301,7 @@ import skills from "~/assets/skills";
 import blogPosts from "~/assets/blog";
 import Nodes from '../components/Nodes.vue';
 import BlogCard from '../components/BlogCard.vue';
+import { sortDateFn } from "~/assets/utility"
 
 export default {
   name: "IndexPage",
@@ -310,6 +313,8 @@ export default {
       projects: projects,
       skills: skills,
       blogPosts: blogPosts,
+
+      sortDateFn: sortDateFn,
 
       tab: "blog",
       tabs: [
@@ -450,15 +455,6 @@ export default {
 .show-scroll::-webkit-scrollbar-thumb {
   background: #303030;
   border-radius: 5px;
-}
-
-.tab {
-  text-align: center;
-  font-size: 1rem;
-  border-radius: 20px;
-  background-color: rgba(255, 195, 0, 0.05);
-  margin: 3px;
-  font-size: 1.2rem;
 }
 
 .v-chip {
