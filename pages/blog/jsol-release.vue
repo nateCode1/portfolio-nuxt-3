@@ -36,7 +36,6 @@
     </div>
 
     <h2>Technical Details</h2>
-    <p>When making this project there were some interesting design choices, I'll be going over some of those here.</p>
     <p>There are a few interesting technical considerations that arose during this project. I'll be sharing these insights/details below.</p>
 
     <h3>No Framework</h3>
@@ -54,7 +53,7 @@
         title="Another annoyance of not using a framework."
       >
         <v-expansion-panel-text>
-          <p>The other thing that was very annoying because of the lack of a framework was having to use a hacked-together implementation for collapsing sections. The code for the collapsing section containing this text is very simple because of VuetifyJS's built in expansion panels, but for the non-framework version, an event listener must be registered for each panel. This is mildly inconvenient to begin with, but considering that additional collapsing panels may be added at runtime (like for problem examples), it becomes far more of a a hassle to ensure each one has the appropriate on-click event to toggle its content.</p>
+          <p>Another thing that was very annoying because of the lack of a framework was having to use a hacked-together implementation for collapsing sections. The code for the collapsing section containing this text is very simple because of VuetifyJS's built in expansion panels, but for the non-framework version, an event listener must be registered for each panel. This is mildly inconvenient to begin with, but considering that additional collapsing panels may be added at runtime (like for problem examples), it becomes far more of a a hassle to ensure each one has the appropriate on-click event to toggle its content.</p>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
