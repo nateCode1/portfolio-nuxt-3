@@ -40,7 +40,7 @@
 
     <h3>No Framework</h3>
 
-    <p>I decided early on that I wanted to make the entire project without using a web framework, and keeping everything in a single file with no dependencies. This was mostly an arbitrary challenge for myself, but it does have the benefit of making the finished product highly portable. The project can be run in from a single file that can be sent around, and used without any internet access.</p>
+    <p>I decided early on that I wanted to make the entire project without using a web framework, and keeping everything in a single file with no dependencies. This was mostly an arbitrary challenge for myself, but it does have the benefit of making the finished product highly portable. The project can be run from a single .html file that can be sent around, and used without any internet access.</p>
 
     <p>The one concession I made was allowing myself to use links to documentation when writing informational content. I tried to ensure the most prudent information was present, but also linked to the full MDN docs for completeness.</p>
 
@@ -58,7 +58,7 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <p>Perhaps the most obvious downside was the lack of components. While it is possible to create something like a component system with vanilla JS, it is more effort than it's worth for small projects. So there was a lot of copy-pasting of html, which made it annoying to change things. If I were to to this again, I'd probably invest the time to make a component out of collapsable sections. However, they were a late addition, which is why I didn't bother.</p>
+    <p>Perhaps the most obvious downside was the lack of components. While it is possible to create something like a component system with vanilla JS, it is more effort than it's worth for small projects. This meant there was a lot of copy-pasting of html, which made it annoying to change things. If I were to to this again, I'd probably invest the time to make a component out of collapsable sections. However, they were a late addition, which is why I didn't bother.</p>
       
 
     <h3>Syntax Highlighting</h3>
@@ -78,9 +78,9 @@
         title="Pseudo Code for Bracket Highlighting"
       >
         <v-expansion-panel-text>
-          <p>This is pseudo code for the algorithm that highlights brackets in paris. It assumes that code is a string to be highlighted, colours is a list containing the colour of each character, and that bracketColours is an infinitely long list of colours for the brackets to be. This also assumes that there are not more close brackets than open brackets.</p>
+          <p>This is pseudo code for the algorithm that highlights brackets in paris. It assumes that <code>code</code> is a string to be highlighted, <code>colours</code> is a list containing the colour of each character, and that <code>bracketColours</code> is an infinitely long* list of colours for the brackets to be. This also assumes that there are not more close brackets than open brackets.</p>
           <p>Note the use of the post-increment and pre-decrement operators.</p>
-          <p style="font-size: 0.9rem;">If bracketColours weren't infinitely long, the modulo operator could be employed to reuse colours as needed: e.g. instead of: <code>bracketColours[i]</code>, do: <code>bracketColours[i % bracketColours.length]</code>.</p>
+          <p style="font-size: 0.85rem;">*If bracketColours weren't infinitely long, the modulo operator could be employed to reuse colours as needed: e.g. instead of: <code>bracketColours[i]</code>, do: <code>bracketColours[i % bracketColours.length]</code>. This was omitted for clarity in the code below.</p>
           <v-code class="mt-2"><pre>
 depth = 0
 for i = 0 to code.length:
@@ -110,7 +110,7 @@ for i = 0 to code.length:
     <p>I've done a lot of coding problems before, so it was interesting to try my hand at writing them. There were two notable challenges in writing these problems:</p>
 
     <ol class="mt-2">
-      <li>The problems must teach people the skills to solve subsequent problems.</li>
+      <li>The problems must teach users the skills to solve subsequent problems.</li>
       <li>The problems must be solvable in one line.</li>
     </ol>
 
