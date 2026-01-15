@@ -6,7 +6,7 @@
         :key="'00'"
       ></canvas>
       <div class="animation-indicator" v-on:click="() => this.setAnimationEnabled(!this.animationEnabled)">
-        <p style="font-size: 0.8  em; margin: 0;">Animation {{this.animationEnabled ? "Enabled" : "Disabled"}}</p>
+        <p style="font-size: 0.8em; margin: 0;">Animation {{this.animationEnabled ? "Enabled" : "Disabled"}}</p>
       </div>
   </div>
 </template>
