@@ -5,10 +5,34 @@
         style="position: fixed; left:0; top:0; z-index: 0; filter: brightness(37%)"
         :key="'00'"
       ></canvas>
+      <div class="animation-indicator" v-on:click="() => this.setAnimationEnabled(!this.animationEnabled)">
+        <p style="font-size: 0.8  em; margin: 0;">Animation {{this.animationEnabled ? "Enabled" : "Disabled"}}</p>
+      </div>
   </div>
 </template>
 
+<style>
+  .animation-indicator {
+    transition: 0.3s all;
+    opacity: 50%;
+    position: fixed; 
+    right: 0; 
+    bottom: 0;
+    z-index: 1000000;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    padding: 3px 4px 0 4px;
+    border-radius: 5px 0 0 0;
+  }
+
+  .animation-indicator:hover {
+    opacity: 100%;
+  }
+</style>
+
 <script>
+import { globalState } from '~/assets/utility';
+
 export default {
   data() {
     return {
@@ -24,6 +48,12 @@ export default {
       mouseX: null,
       mouseY: null,
       scrollPos: null,
+
+      animationEnabled: globalState.animationEnabled,
+
+      consecutiveSlowFrames: 0,
+      consecutiveSlowFramesUntilStop: 10,
+      minFps: 30,
     }
   },
   mounted() {
@@ -114,7 +144,25 @@ export default {
 
       this.draw();
     },
+    setAnimationEnabled(enabled) {
+      if (!enabled) {
+        this.animationEnabled = false;
+        globalState.animationEnabled = false;
+      }
+      else {
+        this.animationEnabled = true;
+        globalState.animationEnabled = true;
+        this.animate()
+      }
+    },
     animate() {
+      if (!this.animationEnabled) {
+        this.handleResize();
+        // requestAnimationFrame(this.animate);
+        return;
+      }
+
+      let frameStart = Date.now()
       requestAnimationFrame(this.animate);
 
       let now = Date.now();
@@ -126,6 +174,18 @@ export default {
         this.draw(this.frameCount);
         this.frameCount++;
       }
+
+      let frameTime = Date.now() - frameStart
+      if (frameTime > 1000 / this.minFps) {
+        this.consecutiveSlowFrames++;
+        if (this.consecutiveSlowFrames > this.consecutiveSlowFramesUntilStop) {
+          this.animationEnabled = false;
+        }
+      }
+      else {
+        this.consecutiveSlowFrames = 0;
+      }
+      console.log(frameTime)
     },
     handleScroll(event) {
       let newScrollPos =
